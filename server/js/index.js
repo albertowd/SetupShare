@@ -1,7 +1,28 @@
-var rowTempalte = "<div class=\"row {color} py-3\"><div class=\"col-6 col-md-2\">{driver}</div><div class=\"col-6 col-md-2\">{name}</div><div class=\"col-6 col-md-2\">{track}</div><div class=\"col-6 col-md-2\">{car}</div><div class=\"col-6 col-md-2\"></div><div class=\"col-6 col-md-2\"><a class=\"btn btn-info w-100\" href=\"setups/setupshare.php?car={car}&driver={driver}&name={name}&track={track}&download=true\" download=\"{name}.ini\">Download</a></div></div>";
+var rowTempalte = "<div class=\"{color} py-3 setup row\"><div class=\"col-6 col-md-2 driver\">{driver}</div><div class=\"col-6 col-md-2 name\">{name}</div><div class=\"col-6 col-md-2 track\">{track}</div><div class=\"col-6 col-md-2 car\">{car}</div><div class=\"col-6 col-md-2\"></div><div class=\"col-6 col-md-2\"><a class=\"btn btn-info w-100\" href=\"setups/setupshare.php?car={car}&driver={driver}&name={name}&track={track}&download=true\" download=\"{name}.ini\">Download</a></div></div>";
 
 function filterList() {
+    var car = $("#car").val();
+    var driver = $("#driver").val();
+    var name = $("#name").val();
+    var track = $("#track").val();
 
+    var rows = $(".setup")
+    $.each(rows, function (index, row) {
+        var visible = true;
+        if(car.length > 0) {
+            visible = visible && $(row).find(".car").text().includes(car);
+        };
+        if(driver.length > 0) {
+            visible = visible && $(row).find(".driver").text().includes(driver);
+        };
+        if(name.length > 0) {
+            visible = visible && $(row).find(".name").text().includes(name);
+        };
+        if(track.length > 0) {
+            visible = visible && $(row).find(".track").text().includes(track);
+        };
+        $(row).toggleClass( "d-none", !visible );
+    });
 }
 
 function loadList() {
@@ -13,7 +34,7 @@ function loadList() {
             alert("Sorry, it wasn't possible to load any setup.");
         })
         .always(function () {
-            //$("#search").prop("disabled", false);
+            $("#search").prop("disabled", false);
         });
 }
 
