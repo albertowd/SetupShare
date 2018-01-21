@@ -28,7 +28,7 @@ def acMain(ac_version):
     ac.setIconPosition(GUI.app_window, 0, -10000)
     ac.setSize(GUI.app_window, 400, 400)
 
-    lb_version = ac.addLabel(GUI.app_window, "v1.0.1")
+    lb_version = ac.addLabel(GUI.app_window, "v1.0.2")
     ac.setPosition(lb_version, 10, 3)
 
     GUI.bt_refresh = GUI.img_buttow("refresh")
@@ -117,7 +117,7 @@ def acMain(ac_version):
         GUI.set_status("Server down, sorry.", True)
     GUI.update()
 
-    return "Community Setup"
+    return "Setup Share"
 
 
 def acShutdown():
