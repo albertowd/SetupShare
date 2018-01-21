@@ -1,4 +1,4 @@
-var rowTempalte = "<div class=\"{color} py-3 setup row\"><div class=\"col-6 col-md-2 driver\">{driver}</div><div class=\"col-6 col-md-2 name\">{name}</div><div class=\"col-6 col-md-2 track\">{track}</div><div class=\"col-6 col-md-2 car\">{car}</div><div class=\"col-6 col-md-2\"></div><div class=\"col-6 col-md-2\"><a class=\"btn btn-info w-100\" href=\"setups/setupshare.php?car={car}&driver={driver}&name={name}&track={track}&download=true\" download=\"{name}.ini\">Download</a></div></div>";
+var rowTempalte = "<div class=\"{color} py-3 setup row\"><div class=\"col-6 col-md-2 driver\">{driver}</div><div class=\"col-6 col-md-2 name\">{name}</div><div class=\"col-6 col-md-2 track\">{track}</div><div class=\"col-6 col-md-2 car\">{car}</div><div class=\"col-6 col-md-2\"></div><div class=\"col-6 col-md-2\"><a class=\"btn btn-danger download w-100\" href=\"setups/setupshare.php?car={car}&driver={driver}&name={name}&track={track}&download=true\" download=\"{name}.ini\">Download</a></div></div>";
 
 function filterList() {
     var car = $("#car").val();
