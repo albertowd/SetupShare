@@ -24,7 +24,8 @@ def download(car, driver, setup, track):
 
 def default_url(car, track):
     """ Makes the default URL for the player server name, track and car. """
-    return "http://ligarst.com.br/setupshare.php?car={}&track={}".format(car, track)
+    url = "http://albertowd.com.br/setupshare/setups/setupshare.php?car={}&track={}"
+    return url.format(car, track)
 
 
 def upload(car, driver, ini_content, setup, sp_content, track):

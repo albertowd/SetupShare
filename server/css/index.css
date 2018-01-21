@@ -1,0 +1,35 @@
+body {
+    background-color: transparent;
+    height: 100%;
+    width: 100%;
+}
+
+div, h1, p {
+    color: #FFFFFF;
+}
+
+html {
+    background-attachment: fixed;
+    background-color: #172226;
+    background-image: url("../img/background.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.btn-danger {
+    background-color: #be0000;
+    border-color: #FFFFFF;
+    border-width: 3px;
+}
+
+.download {
+    background-color: transparent;
+}
+
+.even {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.search {
+    background-color: #454545;
+}

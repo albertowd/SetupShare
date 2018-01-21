@@ -1,4 +1,14 @@
-# SetupShare
+# Setup Share
 A simple App for sharing setups within Assetto Corsa sessions.
 
-The app works on saved Setups/Pit Strategies used by your car in your track in the session. You can only download setups from other drivers in the session that are using the same car as you and has uploaded their setups already. The server holds the user setup for 24h, then it will be deleted.
+## App
+
+The app works on saved Setups/Pit Strategies used by your car and track in the current session (online or single player). You can only download setups from other drivers in the session that are using the same car as you and already uploaded one setup.
+
+### App Install
+
+Just unzip the release content direct on your assetto corsa main folder (C:/Program Files (x86)/steam/steamapps/common/assettocorsa) and load the game, selecting it on the app menu while on track.
+
+## Site
+
+The site shows all the uploaded setups, use the search filter to find and download one. The site doesn't support download pit strategies.
