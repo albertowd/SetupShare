@@ -1,18 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en_US">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="img/Setup Share_ON.png">
-
-    <title>Setup Share</title>
-
     <link href="css/bootstrap-4.0.0.min.css" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
+    <link rel="icon" href="img/Setup Share_ON.png">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="author" content="Alberto Wollmann Dietrich">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Facebook tags. -->
+    <meta property="og:description" content="A simple App for sharing setups within Assetto Corsa sessions." />
+    <meta property="og:image" content="http://albertowd.com.br/setupshare/img/facebook-meta.png" />
+    <meta property="og:image:width" content="1201" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="Setup Share" />
+    <meta property="og:title" content="Setup Share" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://albertowd.com.br/setupshare/index.php" />
+
+    <title>Setup Share</title>
 </head>
 
 <body>
