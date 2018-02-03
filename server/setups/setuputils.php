@@ -3,52 +3,47 @@ require_once "setup.php";
 
 class SetupUtils
 {
+
     /**
      * Check the params passed through HTTP and return a default value.
-     * @param string $param Searched param.
+     *
+     * @param string $param
+     *            Searched param.
      */
-    public static function checkParam(string $param) {
+    public static function checkParam(string $param)
+    {
         return isset($_REQUEST[$param]) && strlen($_REQUEST[$param]) > 0 ? $_REQUEST[$param] : null;
     }
 
     /**
-     * Read setups from file and return them.
+     * Search for filtered setups.
+     *
+     * @param string $car
+     *            Car name, if there is.
+     * @param string $track
+     *            Track name, if there is.
+     * @return array List of info of each setup available.
      */
-    public static function listSetups(): array {
-        $setups = array();
-
-        foreach (scandir(".") as &$fileName) {
-            if (!is_dir($fileName) && strrpos($fileName, ".ini") != false) {
-                array_push($setups, Setup::fromFile(substr($fileName, 0, -4)));
-            }
-        }
-
-        return $setups;
-    }
-
-    /**
-     * Search setups by file name to return to the App.
-     * @param string $car Name of the wanted car.
-     * @param string $track Name of the wanted track.
-     */
-    public static function listSetupsToApp(string $car, string $track): array
+    public static function listSetups(string &$car, string &$track): array
     {
         $setups = array();
-
-        $filter = "$track.$car";
-        $filterLen = strlen($filter);
-        foreach (scandir(".") as &$fileName) {
-            if (!is_dir($fileName) && strrpos($fileName, ".ini") != false && strpos($fileName, $filter) === 0) {
-                $setup = new Setup();
-                Setup::parseInfoFromPath(substr($fileName, 0, -4), $setup);
-
-                if (!isset($setups[$setup->driver])) {
-                    $setups[$setup->driver] = array();
+        
+        foreach (scandir("files") as &$fileName) {
+            if (! is_dir($fileName) && strrpos($fileName, ".ini") !== false) {
+                $info = explode(".", $fileName);
+                if ($car != null && $info[1] != $car) {
+                    continue;
                 }
-                array_push($setups[$setup->driver], $setup->name);
+                if ($track != null && $info[0] != $track) {
+                    continue;
+                }
+                
+                $setup = new Setup();
+                Setup::parseInfoFromName($fileName, $setup);
+                array_push($setups, $setup->info);
             }
         }
-
+        
         return $setups;
     }
 }
