@@ -15,11 +15,11 @@ function downloadSetup(setup) {
 	document.body.appendChild(link);
 
 	link.setAttribute("download", setup.name + ".ini");
-	link.setAttribute("href", makeUrl(setup, "ini=ini"));
+	link.setAttribute("href", makeUrl(setup, "ini"));
 	link.click();
 
 	link.setAttribute("download", setup.name + ".sp");
-	link.setAttribute("href", makeUrl(setup, ""));
+	link.setAttribute("href", makeUrl(setup, "sp"));
 	link.click();
 
 	document.body.removeChild(link);
@@ -70,9 +70,9 @@ function filterList() {
  * @returns The encoded URL.
  */
 function makeUrl(setup, extension) {
-	var url = "setups/setupshare.php?service=download&car={car}&driver={driver}&name={name}&track={track}&"
-			+ extension;
+	var url = "setups/setupshare.php?service=download&car={car}&driver={driver}&ext={ext}&name={name}&track={track}";
 	url = url.replace("{driver}", setup.driver);
+	url = url.replace("{ext}", extension);
 	url = url.replace("{name}", setup.name);
 	url = url.replace("{track}", setup.track);
 	return url.replace("{car}", setup.car);

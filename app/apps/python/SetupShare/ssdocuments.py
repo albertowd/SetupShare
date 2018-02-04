@@ -7,8 +7,8 @@ import os
 
 def setup_dir():
     """ Returns the current Assetto Corsa user setups folder. """
-    csidl_personal = 5       # My Documents
-    shgfp_type_current = 0   # 0 Get current, 1 default value
+    csidl_personal = 5  # My Documents
+    shgfp_type_current = 0  # 0 Get current, 1 default value
     buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
     ctypes.windll.shell32.SHGetFolderPathW(
         None, csidl_personal, None, shgfp_type_current, buf)

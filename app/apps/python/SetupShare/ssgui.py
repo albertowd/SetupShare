@@ -5,8 +5,8 @@ Setup Share Gui utils.
 import math
 
 import ac
-import Connection
-import Documents
+import ssconnection
+import ssdocuments
 
 
 class Driver:
@@ -122,11 +122,11 @@ class Gui:
         if driver is not None:
             setup = driver.setups[driver.current]
             track = ac.getTrackName(0)
-            json = Connection.download(driver.car, driver.name, setup, track)
+            json = ssconnection.download(driver.car, driver.name, setup, track)
             if isinstance(json, dict):
-                Documents.write_setup(driver.car, json["ini"], setup, track)
+                ssdocuments.write_setup(driver.car, json["ini"], setup, track)
                 if len(json["sp"]) > 0:
-                    Documents.write_setup(
+                    ssdocuments.write_setup(
                         driver.car, json["sp"], setup, track, "sp")
                 self.set_status("{} downloaded.".format(setup))
             else:
@@ -181,7 +181,7 @@ class Gui:
         ac.setVisible(self.bt_left, 1 if self.page > 0 else 0)
         ac.setVisible(
             self.lb_page, 1 if self.drivers.is_valid(self.page) else 0)
-        ac.setText(self.lb_page, "{}/{}".format(self.page +
+        ac.setText(self.lb_page, "{}/{}".format(self.page + 
                                                 1, self.drivers.page_count()))
         ac.setVisible(self.bt_right, 1 if self.drivers.is_valid(
             self.page + 1) else 0)
@@ -223,11 +223,11 @@ class Gui:
         car = self.driver.car
         track = ac.getTrackName(0)
         # Updates the user setups.
-        self.driver.setups = Documents.list_setups(car, track)
+        self.driver.setups = ssdocuments.list_setups(car, track)
         self.update_setup()
 
         # Updates the drivers setups.
-        json = Connection.available(car, track)
+        json = ssconnection.available(car, track)
         if isinstance(json, dict):
             self.drivers.update_driver_setups(json)
 
@@ -236,10 +236,10 @@ class Gui:
         car = self.driver.car
         setup = self.driver.setups[self.driver.current]
         track = ac.getTrackName(0)
-        ini_content = Documents.read_setup(car, setup, track)
-        sp_content = Documents.read_setup(car, setup, track, "sp")
+        ini_content = ssdocuments.read_setup(car, setup, track)
+        sp_content = ssdocuments.read_setup(car, setup, track, "sp")
         if len(ini_content) == 0:
             self.set_status("Invalid setup.", True)
         else:
-            self.set_status(Connection.upload(car, ac.getDriverName(
+            self.set_status(ssconnection.upload(car, ac.getDriverName(
                 0), ini_content, setup, sp_content, track))

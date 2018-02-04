@@ -35,12 +35,12 @@ function downloadSetup(): void
         http_response_code(404);
         die("$name not found.");
     } else {
-        $ini = SetupUtils::checkParam("ini");
-        if ($ini == null && $setup->sp == "") {
+        $ext = SetupUtils::checkParam("ext");
+        if ($ext == "sp" && $setup->sp == "") {
             http_response_code(404);
             die("$name not found.");
         } else {
-            die($ini != null ? $setup->ini : $setup->sp);
+            die($ext == "ini" ? $setup->ini : $setup->sp);
         }
     }
 }
@@ -81,7 +81,7 @@ function uploadSetup(): void
     }
     
     // Trying to save the ini file first.
-    $tmp = fopen("files/$car.$track.$driver.$name.ini", "w");
+    $tmp = fopen("files/$track.$car.$driver.$name.ini", "w");
     if ($tmp === false) {
         http_response_code(403);
         die("Error on $name.ini.");
@@ -92,7 +92,7 @@ function uploadSetup(): void
     
     // Now let's save the sp file, if there is one.
     if ($sp != null) {
-        $tmp = fopen("files/$car.$track.$driver.$name.sp", "w");
+        $tmp = fopen("files/$track.$car.$driver.$name.sp", "w");
         if ($tmp === false) {
             http_response_code(403);
             die("Error on $name.sp.");

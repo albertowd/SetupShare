@@ -27,14 +27,13 @@ class SetupUtils
     public static function listSetups(string &$car, string &$track): array
     {
         $setups = array();
-        
         foreach (scandir("files") as &$fileName) {
             if (! is_dir($fileName) && strrpos($fileName, ".ini") !== false) {
                 $info = explode(".", $fileName);
-                if ($car != null && $info[1] != $car) {
+                if ($track != "" && $info[0] != $track) {
                     continue;
                 }
-                if ($track != null && $info[0] != $track) {
+                if ($car != "" && $info[1] != $car) {
                     continue;
                 }
                 
