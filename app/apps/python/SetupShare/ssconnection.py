@@ -21,7 +21,7 @@ def download(car, driver, name, track, extension="ini"):
 
 def default_url(car, track):
     """ Makes the default URL for the player server name, track and car. """
-    url = "http://localhost/albertowd.com.br/setupshare/setups/setupshare.php?car={}&track={}"
+    url = "http://albertowd.com.br/setupshare/setups/setupshare.php?car={}&track={}"
     return url.format(car, track)
 
 
@@ -35,7 +35,7 @@ def upload(car, driver, ini_content, name, sp_content, track):
 
 def verify_server():
     """ Verify the server connection. """
-    response = requests.get("http://localhost/albertowd.com.br/setupshare/setups/setupshare.php", timeout=5)
+    response = requests.get("http://albertowd.com.br/setupshare/setups/setupshare.php", timeout=5)
     return response.status_code == 403
 
 

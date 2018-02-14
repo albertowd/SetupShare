@@ -28,7 +28,7 @@ def acMain(ac_version):
     ac.setIconPosition(GUI.app_window, 0, -10000)
     ac.setSize(GUI.app_window, 400, 400)
 
-    lb_version = ac.addLabel(GUI.app_window, "v1.0.2")
+    lb_version = ac.addLabel(GUI.app_window, "v1.1")
     ac.setPosition(lb_version, 10, 3)
 
     GUI.bt_refresh = GUI.img_buttow("refresh")
@@ -78,8 +78,7 @@ def acMain(ac_version):
         ac.setPosition(download, 366, 73 + driver_index * 30)
         ac.setVisible(download, 0)
 
-        GUI.list.append({"download": download, "change": change,
-                         "label": label, "setup": setup})
+        GUI.list.append({"download": download, "change": change, "label": label, "setup": setup})
 
     GUI.bt_left = GUI.img_buttow("left")
     ac.addOnClickedListener(GUI.bt_left, listener_left)
@@ -307,12 +306,10 @@ def listener_refresh(*args):
     """ Refresh the driver list. """
     global GUI
     GUI.set_status("")
+    GUI.clear()
     if ssconnection.verify_server():
-        GUI.update()
-        GUI.drivers.update()
         GUI.update_setups()
     else:
-        GUI.clear()
         GUI.set_status("Server down, sorry.", True)
     GUI.update()
 

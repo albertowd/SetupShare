@@ -7,18 +7,15 @@ import math
 import ac
 import ssconnection
 import ssdocuments
+import sslog
 
 
 class Driver:
     """ Keeps the information about each driver in the server. """
 
-    def __init__(self, driver_index=-1):
-        """ Default constructor the tries to get driver info from the game. """
-        self.car = "" if driver_index < 0 else ac.getCarName(driver_index)
+    def __init__(self, name=""):
         self.current = 0
-        self.connected = False if driver_index < 0 else ac.isConnected(
-            driver_index)
-        self.name = "" if driver_index < 0 else ac.getDriverName(driver_index)
+        self.name = name
         self.setups = []
 
 
@@ -40,9 +37,16 @@ class DriverList:
         if driver_index in range(len(self.__drivers)):
             driver = self.__drivers[driver_index]
         return driver
+    
+    def driver_index(self, name):
+        """ Returns the driver index on the list. """
+        for driver_index in range(len(self.__drivers)):
+            if self.__drivers[driver_index].name is name:
+                return driver_index
+        return -1
 
     def page(self, page):
-        """ Returns the driver name and setup list whitin the page given. """
+        """ Returns the driver, name and setup list whitin the page given. """
         drivers = []
         driver_range = range(len(self.__drivers))
         for driver_index in range(10 * page, 10 * page + 10):
@@ -61,19 +65,12 @@ class DriverList:
         """ Verifies if the page number is valid. """
         return page > -1 and page < self.page_count()
 
-    def update(self):
-        """ Updates the driver list. """
-        self.__drivers = []
-        driver_count = ac.getCarsCount()
-        for driver_index in range(1, driver_count):
-            self.__drivers.append(Driver(driver_index))
-
-    def update_driver_setups(self, setups):
-        """ Updates driver setups with the new ones from the server. """
-        for driver in self.__drivers:
-            driver.setups = []
-            if driver.name in setups:
-                driver.setups = setups[driver.name]
+    def update(self, setups):
+        """ Updates drivers setups. """
+        for setup in setups:
+            if self.driver_index(setup["driver"]) is -1:
+                self.__drivers.append(Driver(setup["driver"]))
+            self.__drivers[self.driver_index(setup["driver"])].setups.append(setup["name"])
 
     def update_setup(self, index, page_index, add=0):
         """ Updates the driver setup index. """
@@ -100,7 +97,7 @@ class Gui:
         self.bt_status_error = 0
         self.bt_upload = 0
         self.done = ""
-        self.driver = Driver(0)
+        self.driver = Driver(ac.getDriverName(0))
         self.drivers = DriverList()
         self.error = ""
         self.lb_mine = 0
@@ -118,27 +115,27 @@ class Gui:
 
     def download(self, index):
         """ Downloads driver setup. """
+        car = ac.getCarName(0)
         driver = self.drivers.driver(index, self.page)
         if driver is not None:
             setup = driver.setups[driver.current]
             track = ac.getTrackName(0)
-            json = ssconnection.download(driver.car, driver.name, setup, track)
-            if isinstance(json, dict):
-                ssdocuments.write_setup(driver.car, json["ini"], setup, track)
-                if len(json["sp"]) > 0:
-                    ssdocuments.write_setup(
-                        driver.car, json["sp"], setup, track, "sp")
+            ini = ssconnection.download(car, driver.name, setup, track)
+            if len(ini) > 100:
+                ssdocuments.write_setup(car, ini, setup, track)
+                sp = ssconnection.download(car, driver.name, setup, track, "sp")
+                if len(sp) > 100:
+                    ssdocuments.write_setup(car, sp, setup, track, "sp")
                 self.set_status("{} downloaded.".format(setup))
             else:
-                self.set_status(json, True)
+                self.set_status(ini, True)
         else:
             self.set_status("Invalid driver.", True)
 
     def img_buttow(self, icon, width=24, height=24):
         """ Creates a nem icon button. """
         button_id = ac.addButton(self.app_window, "")
-        ac.setBackgroundTexture(
-            button_id, "apps/python/SetupShare/img/{}.png".format(icon))
+        ac.setBackgroundTexture(button_id, "apps/python/SetupShare/img/{}.png".format(icon))
         ac.setSize(button_id, width, height)
         return button_id
 
@@ -162,29 +159,22 @@ class Gui:
             ac.setVisible(self.bt_upload, 1)
 
         # Updates the driver list.
-        car = ac.getCarName(0)
         drivers = self.drivers.page(self.page)
         for index, driver in enumerate(drivers):
             # Updates the label of the driver.
             ac.setText(self.list[index]["label"], driver.name)
-            rgb = 1 if driver.car == car and driver.connected else 0.5
-            ac.setFontColor(self.list[index]["label"], rgb, rgb, rgb, 1)
 
             # Updates the setup, change and download buttons.
             has_setup = len(driver.setups) > 0
-            ac.setText(self.list[index]["setup"], "" if len(
-                driver.setups) == 0 else driver.setups[driver.current])
+            ac.setText(self.list[index]["setup"], "" if len(driver.setups) == 0 else driver.setups[driver.current])
             ac.setVisible(self.list[index]["change"], 1 if has_setup else 0)
             ac.setVisible(self.list[index]["download"], 1 if has_setup else 0)
 
         # Updates the page infos.
         ac.setVisible(self.bt_left, 1 if self.page > 0 else 0)
-        ac.setVisible(
-            self.lb_page, 1 if self.drivers.is_valid(self.page) else 0)
-        ac.setText(self.lb_page, "{}/{}".format(self.page + 
-                                                1, self.drivers.page_count()))
-        ac.setVisible(self.bt_right, 1 if self.drivers.is_valid(
-            self.page + 1) else 0)
+        ac.setVisible(self.lb_page, 1 if self.drivers.is_valid(self.page) else 0)
+        ac.setText(self.lb_page, "{}/{}".format(self.page + 1, self.drivers.page_count()))
+        ac.setVisible(self.bt_right, 1 if self.drivers.is_valid(self.page + 1) else 0)
 
         # Updates the info.
         if len(self.error) > 0:
@@ -220,20 +210,21 @@ class Gui:
 
     def update_setups(self):
         """ Updates the driver setup list. """
-        car = self.driver.car
+        car = ac.getCarName(0)
         track = ac.getTrackName(0)
         # Updates the user setups.
         self.driver.setups = ssdocuments.list_setups(car, track)
         self.update_setup()
 
         # Updates the drivers setups.
-        json = ssconnection.available(car, track)
-        if isinstance(json, dict):
-            self.drivers.update_driver_setups(json)
+        self.drivers.clear()
+        setups = ssconnection.available(car, track)
+        if isinstance(setups, list):
+            self.drivers.update(setups)
 
     def upload(self):
         """ Uploads the current setup to the server. """
-        car = self.driver.car
+        car = ac.getCarName(0)
         setup = self.driver.setups[self.driver.current]
         track = ac.getTrackName(0)
         ini_content = ssdocuments.read_setup(car, setup, track)
@@ -241,5 +232,4 @@ class Gui:
         if len(ini_content) == 0:
             self.set_status("Invalid setup.", True)
         else:
-            self.set_status(ssconnection.upload(car, ac.getDriverName(
-                0), ini_content, setup, sp_content, track))
+            self.set_status(ssconnection.upload(car, self.driver.name, ini_content, setup, sp_content, track))
