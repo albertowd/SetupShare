@@ -11,24 +11,24 @@ sys.path.append(os.path.join(os.path.dirname(__file__), STD_LIB))
 os.environ["PATH"] = os.environ["PATH"] + ";."
 
 import ac
-import Connection
-import Gui
-import Log
+import ssconnection
+from ssgui import Gui
+from sslog import log
 
 # Manage the GUI
-GUI = Gui.Gui()
+GUI = Gui()
 
 
 def acMain(ac_version):
     """ Setups the app. """
-    Log.log("Starting Setup Share on AC Python API version {}...".format(ac_version))
+    log("Starting Setup Share on AC Python API version {}...".format(ac_version))
 
     global GUI
     GUI.app_window = ac.newApp("Setup Share")
     ac.setIconPosition(GUI.app_window, 0, -10000)
     ac.setSize(GUI.app_window, 400, 400)
 
-    lb_version = ac.addLabel(GUI.app_window, "v1.0.2")
+    lb_version = ac.addLabel(GUI.app_window, "v1.1")
     ac.setPosition(lb_version, 10, 3)
 
     GUI.bt_refresh = GUI.img_buttow("refresh")
@@ -78,8 +78,7 @@ def acMain(ac_version):
         ac.setPosition(download, 366, 73 + driver_index * 30)
         ac.setVisible(download, 0)
 
-        GUI.list.append({"download": download, "change": change,
-                         "label": label, "setup": setup})
+        GUI.list.append({"download": download, "change": change, "label": label, "setup": setup})
 
     GUI.bt_left = GUI.img_buttow("left")
     ac.addOnClickedListener(GUI.bt_left, listener_left)
@@ -111,18 +110,21 @@ def acMain(ac_version):
     ac.setPosition(GUI.lb_status, 154, 370)
     ac.setSize(GUI.lb_status, 236, 370)
 
-    if Connection.verify_server():
+    if ssconnection.verify_server():
         GUI.set_status("Refresh app to start.")
     else:
         GUI.set_status("Server down, sorry.", True)
     GUI.update()
+    
+    log("Success.")
 
     return "Setup Share"
 
 
 def acShutdown():
     """ Called when the session ends (or restarts). """
-    Log.log("Shuting down Community Setup...")
+    log("Shuting down Community Setup...")
+    log("Success.")
 
 
 def listener_change(*args):
@@ -304,12 +306,10 @@ def listener_refresh(*args):
     """ Refresh the driver list. """
     global GUI
     GUI.set_status("")
-    if Connection.verify_server():
-        GUI.update()
-        GUI.drivers.update()
+    GUI.clear()
+    if ssconnection.verify_server():
         GUI.update_setups()
     else:
-        GUI.clear()
         GUI.set_status("Server down, sorry.", True)
     GUI.update()
 
