@@ -267,7 +267,7 @@ class fileobject(_fileobject):
 
 
 class WrappedSocket(object):
-    '''API-compatibility wrapper for Python OpenSSL's Connection-class.'''
+    '''API-compatibility wrapper for Python OpenSSL's ssconnection-class.'''
 
     def __init__(self, connection, socket):
         self.connection = connection

@@ -74,7 +74,7 @@ class VerifiedHTTPSConnection(HTTPSConnection):
             )
         except SocketTimeout:
                 raise ConnectTimeoutError(
-                    self, "Connection to %s timed out. (connect timeout=%s)" %
+                    self, "ssconnection to %s timed out. (connect timeout=%s)" %
                     (self.host, self.timeout))
 
         resolved_cert_reqs = resolve_cert_reqs(self.cert_reqs)
