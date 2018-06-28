@@ -84,7 +84,8 @@ function uploadSetup(): void
     $tmp = fopen("files/$track.$car.$driver.$name.ini", "w");
     if ($tmp === false) {
         http_response_code(403);
-        die("Error on $name.ini.");
+        error_log(error_get_last()["message"]);
+        die("Error creating $name.ini.");
     } else {
         fwrite($tmp, $ini);
         fclose($tmp);
@@ -95,7 +96,8 @@ function uploadSetup(): void
         $tmp = fopen("files/$track.$car.$driver.$name.sp", "w");
         if ($tmp === false) {
             http_response_code(403);
-            die("Error on $name.sp.");
+            error_log(error_get_last()["message"]);
+            die("Error creating $name.sp.");
         } else {
             fwrite($tmp, $sp);
             fclose($tmp);
