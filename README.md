@@ -11,6 +11,6 @@ First unzip the release content direct on your assetto corsa main folder (C:/Pro
 Select the option menu and the general sub menu. In the UI Module section will be listed this app to be checked.
 Last step is to enter a session and select it on the right app bar to see it on screen.
 
-## Site
+## Web
 
-The site shows all the uploaded setups, use the search filter to find and download one. The site doesn't support download pit strategies.
+The [page](http://albertowd.com.br/setupshare/) shows all the uploaded setups, use the search filter to find and download one (.ini and .sp, if available). Uploads are only allowed through the app.
