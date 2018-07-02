@@ -5,11 +5,9 @@
     <link href="css/bootstrap-4.0.0.min.css" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
     <link rel="icon" href="img/Setup Share_ON.png">
-
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="author" content="Alberto Wollmann Dietrich">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <!-- Facebook tags. -->
     <meta property="og:description" content="A simple App for sharing setups within Assetto Corsa sessions." />
     <meta property="og:image" content="http://albertowd.com.br/setupshare/img/facebook-meta.png" />
@@ -20,20 +18,19 @@
     <meta property="og:title" content="Setup Share" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="http://albertowd.com.br/setupshare/index.php" />
-
     <title>Setup Share</title>
 </head>
 
 <body>
-
     <div class="container-fluid p-5 text-center">
         <h1>
-            <img src="img/Setup Share_ON.png" width="48px" /> Setup Share</h1>
+            <img src="img/Setup Share_ON.png" width="48px" /> Setup Share
+        </h1>
         <p>A simple App for sharing setups within Assetto Corsa sessions.</p>
         <a class="btn btn-danger" href="https://github.com/albertowd/SetupShare">Download App</a>
     </div>
-
-    <div class="container">
+    <div class="container-fluid">
+        <p class="text-center">* Setups with pit strategy.</p>
         <div class="row py-3">
             <div class="col-6 col-md-2">
                 <input type="text" class="form-control" id="driver" placeholder="Driver">
@@ -47,15 +44,20 @@
             <div class="col-6 col-md-2">
                 <input type="text" class="form-control" id="car" placeholder="Car">
             </div>
-            <div class="col-6 col-md-2"></div>
-            <div class="col-6 col-md-2">
-                <button class="btn btn-danger search w-100" disabled href="#" id="search" onclick="filterList()">Search</button>
+            <div class="col-6 col-md-1">
+                <label>AC Ver</label>
+            </div>
+            <div class="col-6 col-md-1">
+                <label>Version</label>
+            </div>
+            <div class="col-12 col-md-2">
+                <button class="btn btn-danger search w-100" disabled id="search" onclick="loadList()">Search</button>
             </div>
         </div>
     </div>
-
-    <div class="container" id="rows"></div>
-
+    <div class="container-fluid" id="rows">
+        <div class="container text-center" id="mask" />
+    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

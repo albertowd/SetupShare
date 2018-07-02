@@ -1,35 +1,56 @@
 body {
-    background-color: transparent;
-    height: 100%;
-    width: 100%;
+	background-color: transparent;
+	height: 100%;
+	width: 100%;
 }
 
 div, h1, p {
-    color: #FFFFFF;
+	color: #fff;
 }
 
 html {
-    background-attachment: fixed;
-    background-color: #172226;
-    background-image: url("../img/background.png");
-    background-position: center center;
-    background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-color: #172226;
+	background-image: url("../img/background.png");
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+#mask {
+	background-color: rgba(0, 0, 0, 0.3);
+	background-image: url("../img/loading.svg");
+	background-position: center;
+	background-repeat: no-repeat;
+	display: none;
+	bottom: 5px;
+	left: 5px;
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	z-index: 1;
+}
+
+#rows {
+	min-height: 30px;
+	position: relative;
 }
 
 .btn-danger {
-    background-color: #be0000;
-    border-color: #FFFFFF;
-    border-width: 3px;
+	background-color: transparent;
+	border-color: #fff;
+	border-width: 3px;
 }
 
-.download {
-    background-color: transparent;
+.btn-danger:hover {
+	background-color: #bd0000;
+	border-color: #fff;
+	border-width: 3px;
 }
 
 .even {
-    background-color: rgba(0, 0, 0, 0.3);
+	background-color: rgba(0, 0, 0, 0.3);
 }
 
 .search {
-    background-color: #454545;
+	background-color: #454545;
 }
