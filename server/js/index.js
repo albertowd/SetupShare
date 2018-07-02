@@ -6,7 +6,6 @@ var setupList = [];
  * 
  * @param setup
  *            Setup infos.
- * @returns
  */
 function downloadSetup(setup) {
 	var link = document.createElement("a");
@@ -40,8 +39,6 @@ function makeUrl(id, extension) {
 
 /**
  * Refresh the setup list requesting all the setups to the server.
- * 
- * @returns
  */
 function loadList() {
 	$("#mask").toggleClass("d-none", false);
@@ -50,7 +47,7 @@ function loadList() {
 	filter = filter + "name=" + $("#name").val();
 	filter = filter + "track=" + $("#track").val();
 	$.ajax("api/list.php?" + filter).done(function (data) {
-		setupList = JSON.parse(data);
+		setupList = data;
 		updateList();
 	}).fail(function () {
 		alert("Sorry, it wasn't possible to load any setup.");
@@ -62,11 +59,10 @@ function loadList() {
 
 /**
  * Updates the list contents with new setups.
- * 
- * @returns
  */
-function updateList(setupList) {
+function updateList() {
 	$(".setup").remove();
+	$("#empty").toggleClass("d-none", setupList.length > 0);
 	$.each(setupList, function (index, setup) {
 		var row = rowTempalte.replace("{ac_version}", setup.ac_version).replace(
 			"{version}", setup.version);

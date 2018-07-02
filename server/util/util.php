@@ -6,6 +6,7 @@
 function abortExecution()
 {
     http_response_code(403);
+    header("Content-Type: text;charset=UTF-8");
     die("Please don't.");
 }
 

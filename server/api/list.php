@@ -49,10 +49,10 @@ if (DBConnection::isConnected()) {
 /**
  * Return the found setups.
  */
-if (isDebugMode()) {
-    echo "<pre>";
-}
-echo json_encode($list);
-if (isDebugMode()) {
-    echo "</pre>";
+if (isTest()) {
+    header("Content-Type: text/html;charset=UTF-8");
+    echo "<pre>" . json_encode($list) . "</pre>";
+} else {
+    header("Content-Type: application/json");
+    echo json_encode($list);
 }
