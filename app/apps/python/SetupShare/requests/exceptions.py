@@ -24,7 +24,7 @@ class HTTPError(RequestException):
 
 
 class ConnectionError(RequestException):
-    """A Connection error occurred."""
+    """A ssconnection error occurred."""
 
 
 class ProxyError(ConnectionError):

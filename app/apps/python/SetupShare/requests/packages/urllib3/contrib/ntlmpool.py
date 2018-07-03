@@ -52,7 +52,7 @@ class NTLMConnectionPool(HTTPSConnectionPool):
                   (self.num_connections, self.host, self.authurl))
 
         headers = {}
-        headers['Connection'] = 'Keep-Alive'
+        headers['ssconnection'] = 'Keep-Alive'
         req_header = 'Authorization'
         resp_header = 'www-authenticate'
 
@@ -106,14 +106,14 @@ class NTLMConnectionPool(HTTPSConnectionPool):
                             (res.status, res.reason))
 
         res.fp = None
-        log.debug('Connection established')
+        log.debug('ssconnection established')
         return conn
 
     def urlopen(self, method, url, body=None, headers=None, retries=3,
                 redirect=True, assert_same_host=True):
         if headers is None:
             headers = {}
-        headers['Connection'] = 'Keep-Alive'
+        headers['ssconnection'] = 'Keep-Alive'
         return super(NTLMConnectionPool, self).urlopen(method, url, body,
                                                        headers, retries,
                                                        redirect,

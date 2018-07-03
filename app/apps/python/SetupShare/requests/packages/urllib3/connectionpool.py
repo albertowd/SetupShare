@@ -87,11 +87,11 @@ class HTTPConnectionPool(ConnectionPool, RequestMethods):
     Thread-safe connection pool for one host.
 
     :param host:
-        Host used for this HTTP Connection (e.g. "localhost"), passed into
+        Host used for this HTTP ssconnection (e.g. "localhost"), passed into
         :class:`httplib.HTTPConnection`.
 
     :param port:
-        Port used for this HTTP Connection (None is equivalent to 80), passed
+        Port used for this HTTP ssconnection (None is equivalent to 80), passed
         into :class:`httplib.HTTPConnection`.
 
     :param strict:
@@ -221,7 +221,7 @@ class HTTPConnectionPool(ConnectionPool, RequestMethods):
         Put a connection back into the pool.
 
         :param conn:
-            Connection object for the current host and port as returned by
+            ssconnection object for the current host and port as returned by
             :meth:`._new_conn` or :meth:`._get_conn`.
 
         If the pool is already full, the connection is closed and discarded
@@ -285,7 +285,7 @@ class HTTPConnectionPool(ConnectionPool, RequestMethods):
             conn.request(method, url, **httplib_request_kw)
         except SocketTimeout:
             raise ConnectTimeoutError(
-                self, "Connection to %s timed out. (connect timeout=%s)" %
+                self, "ssconnection to %s timed out. (connect timeout=%s)" %
                 (self.host, timeout_obj.connect_timeout))
 
         # Reset the timeout for the recv() on the socket
@@ -499,7 +499,7 @@ class HTTPConnectionPool(ConnectionPool, RequestMethods):
             raise SSLError(e)
 
         except TimeoutError as e:
-            # Connection broken, discard.
+            # ssconnection broken, discard.
             conn = None
             # Save the error off for retry logic.
             err = e
@@ -512,7 +512,7 @@ class HTTPConnectionPool(ConnectionPool, RequestMethods):
                 raise ProxyError('Cannot connect to proxy. '
                                  'Socket error: %s.' % e)
 
-            # Connection broken, discard. It will be replaced next _get_conn().
+            # ssconnection broken, discard. It will be replaced next _get_conn().
             conn = None
             # This is necessary so we can access e below
             err = e
