@@ -1,26 +1,25 @@
-var rowTempalte = "<div class=\"{color} py-3 setup row\"><div class=\"col-6 col-md-2 driver\">{driver}</div><div class=\"col-6 col-md-2 name\">{name}</div><div class=\"col-6 col-md-2 track\">{track}</div><div class=\"col-6 col-md-2 car\">{car}</div><div class=\"col-6 col-md-1\"></div>{ac_version}<div class=\"col-6 col-md-1\">{version}</div><div class=\"col-6 col-md-2\"><a class=\"btn btn-danger download w-100\" onclick=\"downloadSetup({setup})\">Download</a></div></div>";
-var setupList = [];
+var rowTempalte = "<div class=\"{color} py-3 setup row\">";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 driver\">{driver}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 name\">{name}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 track\">{track}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 car\">{car}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\" title=\"{title}\">{mod}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\"><a class=\"btn btn-danger download w-100\" onclick=\"downloadSetup({id})\">Download</a></div></div>";
 
 /**
  * Makes the download of the ini and sp files of a setup.
  * 
- * @param setup
- *            Setup infos.
+ * @param id
+ *            Setup identifier.
  */
-function downloadSetup(setup) {
+function downloadSetup(id) {
 	var link = document.createElement("a");
 	link.style.display = "none";
-
 	document.body.appendChild(link);
-
-	link.setAttribute("download", setup.name + ".ini");
-	link.setAttribute("href", makeUrl(setup.id, "ini"));
+	link.setAttribute("href", makeUrl(id, "ini"));
 	link.click();
-
-	link.setAttribute("download", setup.name + ".sp");
-	link.setAttribute("href", makeUrl(setup.id, "sp"));
+	link.setAttribute("href", makeUrl(id, "sp"));
 	link.click();
-
 	document.body.removeChild(link);
 }
 
@@ -47,8 +46,7 @@ function loadList() {
 	filter = filter + "name=" + $("#name").val();
 	filter = filter + "track=" + $("#track").val();
 	$.ajax("api/list.php?" + filter).done(function (data) {
-		setupList = data;
-		updateList();
+		updateList(data);
 	}).fail(function () {
 		alert("Sorry, it wasn't possible to load any setup.");
 	}).always(function () {
@@ -60,21 +58,18 @@ function loadList() {
 /**
  * Updates the list contents with new setups.
  */
-function updateList() {
+function updateList(setupList) {
 	$(".setup").remove();
 	$("#empty").toggleClass("d-none", setupList.length > 0);
 	$.each(setupList, function (index, setup) {
-		var row = rowTempalte.replace("{ac_version}", setup.ac_version).replace(
-			"{version}", setup.version);
-		row = row.replace("{driver}", setup.driver).replace(
-			"{driver}", setup.driver);
-		row = row.replace("{name}", setup.name).replace("{name}", setup.name)
-			.replace("{name}", setup.name);
-		row = row.replace("{track}", setup.track).replace("{track}",
-			setup.track);
+		var row = rowTempalte.replace("{driver}", setup.driver);
 		row = row.replace("{car}", setup.car).replace("{car}", setup.car);
 		row = row.replace("{color}", index % 2 == 1 ? "even" : "");
-		row = row.replace("{setup}", "window.setupList[" + index + "]");
+		row = row.replace("{id}", setup.id);
+		row = row.replace("{title}", "AC Version: " + setup.ac_version + "\nVersion: " + setup.version);
+		row = row.replace("{name}", setup.name);
+		row = row.replace("{mod}", setup.version_ts);
+		row = row.replace("{track}", setup.track);
 		rows.append(row);
 	});
 }

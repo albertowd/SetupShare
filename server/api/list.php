@@ -21,10 +21,10 @@ if (DBConnection::isConnected()) {
     /**
      * Check the filters.
      */
-    $carSql = $car != null ? "s.car LIKE ?" : "TRUE";
-    $driverSql = $driver != null ? "s.driver LIKE ?" : "TRUE";
-    $nameSql = $name != null ? "s.name LIKE ?" : "TRUE";
-    $trackSql = $track != null ? "s.track LIKE ?" : "TRUE";
+    $carSql = $car != null ? "car LIKE ?" : "TRUE";
+    $driverSql = $driver != null ? "driver LIKE ?" : "TRUE";
+    $nameSql = $name != null ? "name LIKE ?" : "TRUE";
+    $trackSql = $track != null ? "track LIKE ?" : "TRUE";
     $filters = array();
     if ($car != null) {array_push($filters, $car);}
     if ($driver != null) {array_push($filters, $driver);}
@@ -34,15 +34,17 @@ if (DBConnection::isConnected()) {
     /**
      * Execute the query.
      */
-    $sql = "SELECT s.ac_version, s.car, s.driver, s.name, s.track, s.version
-              FROM setup s
+    $sql = "SELECT *
+              FROM setup
              WHERE TRUE AND $carSql AND $driverSql AND $trackSql
-             ORDER BY s.ac_version DESC, s.version DESC
+             ORDER BY ac_version DESC, version_ts DESC
              LIMIT 15";
     if ($stmt = DBConnection::prepare($sql, $values)) {
         $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($list as &$setup) {
             $setup->name = ($setup->sp != null ? "*" : "") . $setup->name;
+            unset($setup->ini);
+            unset($setup->sp);
         }
     }
 }
