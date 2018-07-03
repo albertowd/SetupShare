@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . "/logger.php";
-
 /**
  * Handles the database connection.
  *
@@ -23,9 +21,9 @@ class DBConnection
         // If it's not connected, try it.
         if (static::$connection == null) {
             try {
-                static::$connection = new PDO("mysql:charset=utf8;dbname=setup_share;host=localhost", "setupserver", "setup2018");
+                static::$connection = new PDO("mysql:charset=utf8;dbname=setup_share;host=localhost", "setup_user", "setup_2018");
             } catch (PDOException $ex) {
-                Logger::log($ex->getMessage(), Logger::LOGGER_IMPORTANT);
+                echo $ex->getMessage() . "<br />\n";
                 static::$connection = null;
             }
         }
@@ -68,7 +66,7 @@ class DBConnection
                 $stmt = static::$connection->query($sql);
                 if (isTest()) {
                     $elapsed = time() - $start;
-                    Logger::log("Executed ({$elapsed}s): $sql", Logger::LOGGER_DEBUGGER);
+                    echo "Executed ({$elapsed}s): $sql<br />\n";
                 }
             } catch (PDOException $ex) {
                 error_log($ex->getMessage());
@@ -96,7 +94,7 @@ class DBConnection
                 $stmt->execute($values);
                 if (isTest()) {
                     $elapsed = time() - $start;
-                    Logger::log("Executed ({$elapsed}s): $sql", Logger::LOGGER_DEBUGGER);
+                    echo "Executed ({$elapsed}s): $sql<br />\n";
                 }
             } catch (PDOException $ex) {
                 error_log($ex->getMessage());
@@ -112,5 +110,5 @@ class DBConnection
  * Connection test.
  */
 if (isset($_REQUEST["test"]) && DBConnection::connect()) {
-    Logger::log(DBConnection::isConnected() ? "Connection tested with success." : "No database connection.", Logger::LOGGER_IMPORTANT);
+    echo (DBConnection::isConnected() ? "Connection tested with success." : "No database connection.");
 }

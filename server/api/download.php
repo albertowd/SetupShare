@@ -27,23 +27,27 @@ if (DBConnection::isConnected()) {
     /**
      * Execute the query.
      */
-    $sql = "SELECT $ext FROM setup WHERE id = ?";
-    if (!$stmt = DBConnection::prepare($sql, array($id))) {
-        Logger::log(DBConnection::errorMessage(), Logger::LOGGER_IMPORTANT);
-    } else {
-        while ($obj = $stmt->fetchObject()) {
-            $setup = $obj->$ext;
-        }
+    $sql = "SELECT * FROM setup WHERE id = ?";
+    if ($stmt = DBConnection::prepare($sql, array($id))) {
+        $setup = $stmt->fetchObject();
     }
 }
 
 /**
  * Return the setup.
  */
-if (isDebugMode()) {
-    echo "<pre>";
-}
-echo $setup;
-if (isDebugMode()) {
-    echo "</pre>";
+if ($setup == null) {
+    http_response_code(404);
+    header("Content-Type: text;charset=UTF-8");
+    die("Setup not found.");
+} else {
+    if (isTest()) {
+        header("Content-Type: text/html;charset=UTF-8");
+        die("<pre>{$setup->$ext}</pre>");
+    } else {
+        header("Content-Disposition: attachment;filename=\"{$setup->name}\"");
+        header("Content-Length: " . mb_strlen($setup->$ext));
+        header("Content-Type: application/octet-stream;");
+        die($setup->$ext);
+    }
 }

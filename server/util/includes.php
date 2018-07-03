@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/db_connection.php";
-require_once __DIR__ . "/logger.php";
 require_once __DIR__ . "/util.php";
 session_start();
 
@@ -21,7 +20,7 @@ function php_error_handler()
     }
 }
 error_reporting(E_ALL);
-register_shutdown_function("php_error_handler");
+//register_shutdown_function("php_error_handler");
 
 /**
  * TODO: configure https.

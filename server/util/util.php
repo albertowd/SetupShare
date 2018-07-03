@@ -24,30 +24,12 @@ function debug($obj)
 }
 
 /**
- * Verifies if it's in debug mode (requests from localhost).
- * @return bool
- */
-function isDebugMode()
-{
-    return $_SERVER["HTTP_HOST"] === "localhost";
-}
-
-/**
  * Verifies if is a test run.
  * @return bool
  */
 function isTest()
 {
     return isset($_REQUEST["test"]);
-}
-
-/**
- * Returns the host with the debug folder in the path, case it's in debug mode.
- * @return string
- */
-function host()
-{
-    return "http://" . $_SERVER["HTTP_HOST"] . (isDebugMode() ? "/albertowd.com.br" : "");
 }
 
 /**
@@ -66,15 +48,4 @@ function param(string $name, bool $forceNull = true)
         $param = $_REQUEST[$name];
     }
     return $param;
-}
-
-/**
- * Verifies if there's a parameter in the request and if there's value in it.
- * @param string $name
- *            Parameter name.
- * @return bool
- */
-function verifyParam(string $name)
-{
-    return isset($_REQUEST[$name]) && strlen($_REQUEST[$name]) > 0;
 }

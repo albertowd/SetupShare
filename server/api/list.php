@@ -39,20 +39,22 @@ if (DBConnection::isConnected()) {
              WHERE TRUE AND $carSql AND $driverSql AND $trackSql
              ORDER BY s.ac_version DESC, s.version DESC
              LIMIT 15";
-    if (!$stmt = DBConnection::prepare($sql, $values)) {
-        Logger::log(DBConnection::errorMessage(), Logger::LOGGER_IMPORTANT);
-    } else {
+    if ($stmt = DBConnection::prepare($sql, $values)) {
         $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($list as &$setup) {
+            $setup->name = ($setup->sp != null ? "*" : "") . $setup->name;
+        }
     }
 }
 
 /**
  * Return the found setups.
  */
+$list = json_encode($list);
 if (isTest()) {
     header("Content-Type: text/html;charset=UTF-8");
-    echo "<pre>" . json_encode($list) . "</pre>";
+    die("<pre>$list</pre>");
 } else {
     header("Content-Type: application/json");
-    echo json_encode($list);
+    die($list);
 }
