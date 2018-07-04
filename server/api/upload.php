@@ -2,62 +2,58 @@
 require_once __DIR__ . "/../util/includes.php";
 
 /**
- * Setup list.
+ * Return var.
  */
-$list = array();
+$ret = false;
 
 /**
- * Optional parameters.
+ * Mandatory parameters.
  */
-$car = param("car");
-$driver = param("driver");
-$track = param("track");
+$setup = json_decode(param("setup"));
 
 /**
  * Do something!
  */
-if (DBConnection::isConnected()) {
-    /**
-     * Check the filters.
-     */
-    $carSql = $car != null ? "c.name LIKE ?" : "TRUE";
-    $driverSql = $driver != null ? "d.name LIKE ?" : "TRUE";
-    $trackSql = $track != null ? "t.name LIKE ?" : "TRUE";
-    $values = array();
-    if ($car != null) {array_push($values, $car);}
-    if ($driver != null) {array_push($values, $driver);}
-    if ($track != null) {array_push($values, $track);}
+if (setup != null && DBConnection::isConnected()) {
+    if(setup.id > 0) {
+        /**
+         * Old setups, let's update it.
+         */
+        $sql = "UPDATE setup
+                   SET ac_version = ?, ini = ?, sp = ?, 'version' = 'version' + 1
+                 WHERE id = ?";
+        $values = array($setup->ac_version, $setup->ini, $setup->sp);
 
-    /**
-     * Execute the query.
-     */
-    $sql = "SELECT s.name setup, c.name car, d.name driver, t.name track
-              FROM setup s
-              JOIN car c ON(s.id_car = c.id)
-              JOIN driver d ON(s.id_driver = d.id)
-              JOIN track t ON(s.id_track = t.id)
-             WHERE TRUE AND $carSql AND $driverSql AND $trackSql
-             ORDER BY s.version_ts DESC
-             LIMIT 15";
-    if (!$stmt = DBConnection::prepare($sql, $values)) {
-        Logger::log(DBConnection::errorMessage(), Logger::LOGGER_IMPORTANT);
+        /**
+         * Execute the query.
+         */
+        if ($stmt = DBConnection::prepare($sql, $values) && $stmt->execute()) {
+            $ret = $stmt->rowCount();
+        }
     } else {
-        while ($obj = $stmt->fetchObject()) {
-            unset($obj->id_car);
-            unset($obj->id_driver);
-            unset($obj->id_track);
-            array_push($list, $obj);
+        /**
+         * New setup, time to insert.
+         */
+        $sql = "INSERT INTO setup(ac_version, car, driver, ini, 'name', sp, track)
+                VALUES(?, ?, ?, ?, ?, ?, ?)";
+        $values = array($setup->ac_version, $setup->car, $setup->driver, $setup->ini, $setup->name, $setup->sp, $setup->track);
+        /**
+         * Execute the query.
+         */
+        if ($stmt = DBConnection::prepare($sql, $values) && $stmt->execute()) {
+            $ret = DBConnection::lastInsertId();
         }
     }
 }
 
 /**
- * Return the found setups.
+ * Return the new id or success of the uploaded setup.
  */
-if (isDebugMode()) {
-    echo "<pre>";
-}
-echo json_encode($list);
-if (isDebugMode()) {
-    echo "</pre>";
+$ret = json_encode($ret);
+if (isTest()) {
+    header("Content-Type: text/html;charset=UTF-8");
+    die("<pre>$ret</pre>");
+} else {
+    header("Content-Type: application/json");
+    die($ret);
 }

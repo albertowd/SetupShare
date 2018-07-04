@@ -3,39 +3,33 @@ Setup Share Connection utils.
 """
 import requests
 
+SS_API_SERVER = "http://192.168.15.2/albertowd.com.br/setupshare/api"
 
-def available(car, track):
+def combo_list(car, track):
     """ Gets the list os available setups of the car/track. """
-    url = "{}&service=list".format(default_url(car, track))
-    response = requests.get(url, timeout=5)
+    global SS_API_SERVER
+    response = requests.get("{}/list.php?car={}&track={}".format(SS_API_SERVER, car, track), timeout=5)
     return response.json()
 
 
-def download(car, driver, name, track, extension="ini"):
+def download(id, extension="ini"):
     """ Downloads a specific setup. """
-    url = "driver={}&ext={}&name={}&service=download"
-    url = url.format(driver, extension, name)
-    response = requests.get("{}&{}".format(default_url(car, track), url), timeout=5)
+    global SS_API_SERVER
+    response = requests.get("{}/download.php?id={}&ext={}".format(SS_API_SERVER, id, extension), timeout=5)
     return response.text
 
 
-def default_url(car, track):
-    """ Makes the default URL for the player server name, track and car. """
-    url = "http://albertowd.com.br/setupshare/setups/setupshare.php?car={}&track={}"
-    return url.format(car, track)
-
-
-def upload(car, driver, ini_content, name, sp_content, track):
+def upload(setup):
     """ Uploads the user setup. """
-    url = "driver={}&ini={}&name={}&service=upload&sp={}"
-    url = url.format(driver, ini_content, name, sp_content)
-    response = requests.get("{}&{}".format(default_url(car, track), url), timeout=5)
+    global SS_API_SERVER
+    response = requests.get("{}/upload.php?setup={}".format(SS_API_SERVER, setup), timeout=5)
     return response.text
 
 
 def verify_server():
     """ Verify the server connection. """
-    response = requests.get("http://albertowd.com.br/setupshare/setups/setupshare.php", timeout=5)
+    global SS_API_SERVER
+    response = requests.get("{}/download.php".format(SS_API_SERVER), timeout=5)
     return response.status_code == 403
 
 
@@ -45,7 +39,7 @@ if __name__ == "__main__":
     DRIVER = "Alberto Dietrich"
     SETUP = "test"
     TRACK = "spa"
-    print(upload(CAR, DRIVER, "my ini content", SETUP, "my sp content", TRACK))
-    print(available(CAR, TRACK))
-    print(download(CAR, DRIVER, SETUP, TRACK))
-    print(download(CAR, DRIVER, SETUP, TRACK, "sp"))
+    #print(upload(CAR, DRIVER, "my ini content", SETUP, "my sp content", TRACK))
+    print(combo_list(CAR, TRACK))
+    print(download(1))
+    #print(download(CAR, DRIVER, SETUP, TRACK, "sp"))

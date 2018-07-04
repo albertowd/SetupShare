@@ -39,10 +39,10 @@ if (DBConnection::isConnected()) {
              WHERE TRUE AND $carSql AND $driverSql AND $trackSql
              ORDER BY ac_version DESC, version_ts DESC
              LIMIT 15";
-    if ($stmt = DBConnection::prepare($sql, $values)) {
+    if ($stmt = DBConnection::prepare($sql, $values) && $stmt->execute()) {
         $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($list as &$setup) {
-            $setup->name = ($setup->sp != null ? "*" : "") . $setup->name;
+            $setup->name = ($setup->sp != null ? "* " : "") . $setup->name;
             unset($setup->ini);
             unset($setup->sp);
         }
