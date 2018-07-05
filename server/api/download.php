@@ -7,28 +7,27 @@ require_once __DIR__ . "/../util/includes.php";
 $setup = null;
 
 /**
+ * Check the filters.
+ */
+$ext = param("ext");
+$id = param("id");
+
+/**
+ * Check integrity.
+ */
+if (!$ext || !$id) {
+    abortExecution(403, "Invalid id or extension.");
+}
+
+/**
  * Do something!
  */
-if (DBConnection::isConnected()) {
-    /**
-     * Check the filters.
-     */
-    $ext = param("ext");
-    $id = param("id");
-
-    /**
-     * Check integrity.
-     */
-    if (!$ext || !$id) {
-        http_response_code(403);
-        die("Please don't.");
-    }
-
+if (DBConnection::connect()) {
     /**
      * Execute the query.
      */
-    $sql = "SELECT * FROM setup WHERE id = ?";
-    if ($stmt = DBConnection::prepare($sql, array($id)) && $stmt->execute()) {
+    $stmt = DBConnection::prepare("SELECT * FROM setup WHERE id = ?", array($id));
+    if ($stmt && $stmt->execute()) {
         $setup = $stmt->fetchObject();
     }
 }
@@ -37,17 +36,15 @@ if (DBConnection::isConnected()) {
  * Return the setup.
  */
 if ($setup == null) {
-    http_response_code(404);
-    header("Content-Type: text;charset=UTF-8");
-    die("Setup not found.");
+    abortExecution(404, "Setup not found");
 } else {
     if (isTest()) {
         header("Content-Type: text/html;charset=UTF-8");
-        die("<pre>{$setup->$ext}</pre>");
+        debug($setup->ext);
     } else {
         header("Content-Disposition: attachment;filename=\"{$setup->name}\"");
         header("Content-Length: " . mb_strlen($setup->$ext));
         header("Content-Type: application/octet-stream;");
-        die($setup->$ext);
+        echo $setup->$ext;
     }
 }

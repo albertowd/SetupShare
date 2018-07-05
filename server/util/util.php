@@ -1,13 +1,23 @@
 <?php
 
 /**
- * Wrong parameters, are you trying what, sr?
+ * Defnie the <br> tag.
  */
-function abortExecution()
+define("BR", "<br />");
+
+/**
+ * Wrong parameters, are you trying what, sr?
+ * 
+ * @param int $code
+ *            Return code to the request.
+ * @param string $message
+ *            Message to display, if any.
+ */
+function abortExecution(int $code = 403, string $message = "Please don't.")
 {
-    http_response_code(403);
-    header("Content-Type: text;charset=UTF-8");
-    die("Please don't.");
+    http_response_code($code);
+    header("Content-Type: text/html;charset=UTF-8");
+    die(BR . $message);
 }
 
 /**
@@ -18,7 +28,7 @@ function abortExecution()
  */
 function debug($obj)
 {
-    echo "<br><pre>";
+    echo BR . "<pre>";
     var_dump($obj);
     echo "</pre><br>";
 }

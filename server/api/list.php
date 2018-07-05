@@ -17,7 +17,7 @@ $track = param("track");
 /**
  * Do something!
  */
-if (DBConnection::isConnected()) {
+if (DBConnection::connect()) {
     /**
      * Check the filters.
      */
@@ -39,7 +39,8 @@ if (DBConnection::isConnected()) {
              WHERE TRUE AND $carSql AND $driverSql AND $trackSql
              ORDER BY ac_version DESC, version_ts DESC
              LIMIT 15";
-    if ($stmt = DBConnection::prepare($sql, $values) && $stmt->execute()) {
+    $stmt = DBConnection::prepare($sql, $filters);
+    if ($stmt && $stmt->execute()) {
         $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($list as &$setup) {
             $setup->name = ($setup->sp != null ? "* " : "") . $setup->name;
@@ -55,8 +56,8 @@ if (DBConnection::isConnected()) {
 $list = json_encode($list);
 if (isTest()) {
     header("Content-Type: text/html;charset=UTF-8");
-    die("<pre>$list</pre>");
+    debug($list);
 } else {
     header("Content-Type: application/json");
-    die($list);
+    echo $list;
 }
