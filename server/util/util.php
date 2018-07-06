@@ -7,7 +7,7 @@ define("BR", "<br />");
 
 /**
  * Wrong parameters, are you trying what, sr?
- * 
+ *
  * @param int $code
  *            Return code to the request.
  * @param string $message
@@ -17,7 +17,11 @@ function abortExecution(int $code = 403, string $message = "Please don't.")
 {
     http_response_code($code);
     header("Content-Type: text/html;charset=UTF-8");
-    die(BR . $message);
+
+    if (isTest()) {
+        $message = BR . $message;
+    }
+    die($message);
 }
 
 /**
@@ -28,9 +32,15 @@ function abortExecution(int $code = 403, string $message = "Please don't.")
  */
 function debug($obj)
 {
-    echo BR . "<pre>";
-    var_dump($obj);
-    echo "</pre><br>";
+    if (isTest()) {
+        if (is_string($obj)) {
+            echo BR . $obj;
+        } else {
+            echo BR . "<pre>";
+            var_dump($obj);
+            echo "</pre>";
+        }
+    }
 }
 
 /**

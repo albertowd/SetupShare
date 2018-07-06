@@ -39,8 +39,7 @@ if (DBConnection::connect()) {
              WHERE TRUE AND $carSql AND $driverSql AND $trackSql
              ORDER BY ac_version DESC, 'name' DESC
              LIMIT 15";
-    $stmt = DBConnection::prepare($sql, $filters);
-    if ($stmt && $stmt->execute()) {
+    if ($stmt = DBConnection::prepare($sql, $filters)) {
         $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($list as &$setup) {
             $setup->name = ($setup->sp != null ? "* " : "") . $setup->name;

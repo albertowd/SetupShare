@@ -22,20 +22,35 @@ if (!$setup || !$setup->id) {
  * Do something!
  */
 if (DBConnection::connect()) {
-    if ($setup->id > 0) {
+    /**
+     * Default id for insert new setups.
+     */
+    $id = 0;
+
+    /**
+     * Search for the setup in the database.
+     */
+    $sql = "SELECT id
+              FROM setup
+             WHERE car = ? AND driver = ? AND 'name' = ?, track = ?";
+    if ($stmt = DBConnection::prepare($sql, array($setup->car, $setup->driver, $setup->name, $setup->track))) {
+        if ($row = $stmt->fetchObject()) {
+            $id = $row->id;
+        }
+    }
+
+    if ($id > 0) {
         /**
          * Old setups, let's update it.
          */
         $sql = "UPDATE setup
                    SET ac_version = ?, ini = ?, sp = ?, 'version' = 'version' + 1
                  WHERE id = ?";
-        $values = array($setup->ac_version, $setup->ini, $setup->sp);
 
         /**
          * Execute the query.
          */
-        $stmt = DBConnection::prepare($sql, $values)
-        if ($stmt && $stmt->execute()) {
+        if ($stmt = DBConnection::prepare($sql, array($setup->ac_version, $setup->ini, $setup->sp, $id))) {
             $ret = $stmt->rowCount();
         }
     } else {
@@ -48,8 +63,7 @@ if (DBConnection::connect()) {
         /**
          * Execute the query.
          */
-        $stmt = DBConnection::prepare($sql, $values);
-        if ($stmt && $stmt->execute()) {
+        if ($stmt = DBConnection::prepare($sql, $values)) {
             $ret = DBConnection::lastInsertId();
         }
     }

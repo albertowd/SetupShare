@@ -26,8 +26,7 @@ if (DBConnection::connect()) {
     /**
      * Execute the query.
      */
-    $stmt = DBConnection::prepare("SELECT * FROM setup WHERE id = ?", array($id));
-    if ($stmt && $stmt->execute()) {
+    if ($stmt = DBConnection::prepare("SELECT * FROM setup WHERE id = ?", array($id))) {
         $setup = $stmt->fetchObject();
     }
 }

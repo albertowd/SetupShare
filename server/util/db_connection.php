@@ -27,7 +27,7 @@ class DBConnection
                 static::$connection = new PDO("mysql:charset=utf8;dbname=setup_share;host=localhost", "setup_user", "setup_2018");
                 static::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $ex) {
-                echo BR . $ex->getMessage();
+                debug($ex->getMessage());
                 static::$connection = null;
             }
         }
@@ -67,11 +67,10 @@ class DBConnection
         if (static::isConnected()) {
             $start = time();
             try {
+                debug("Querying: $sql.");
                 $stmt = static::$connection->query($sql);
-                if (isTest()) {
-                    $elapsed = time() - $start;
-                    echo BR . "Executed ({$elapsed}s): $sql";
-                }
+                $elapsed = time() - $start;
+                debug("Executed: {$elapsed}s.");
             } catch (PDOException $ex) {
                 error_log($ex->getMessage());
             }
@@ -107,12 +106,11 @@ class DBConnection
         if (static::isConnected()) {
             $start = time();
             try {
+                debug("Preparing: $sql.");
                 $stmt = static::$connection->prepare($sql);
                 $stmt->execute($values);
-                if (isTest()) {
-                    $elapsed = time() - $start;
-                    echo BR . "Executed ({$elapsed}s): $sql";
-                }
+                $elapsed = time() - $start;
+                debug("Executed: {$elapsed}s.");
             } catch (PDOException $ex) {
                 error_log($ex->getMessage());
             }
@@ -126,6 +124,6 @@ class DBConnection
 /**
  * Connection test.
  */
-if (isset($_REQUEST["test"]) && DBConnection::connect()) {
-    echo BR . (DBConnection::isConnected() ? "Connection tested with success." : "No database connection.");
+if (isTest()) {
+    debug(DBConnection::connect() ? "Connection tested with success." : "No database connection.");
 }
