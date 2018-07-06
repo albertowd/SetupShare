@@ -1,19 +1,22 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Setup Share is a Python app to exchange seputs inside an Assetto Corsa session.
 """
 import os
 import platform
 import sys
-STD_LIB = "stdlib"
+
 if platform.architecture()[0] == "64bit":
-    STD_LIB = "stdlib64"
-sys.path.append(os.path.join(os.path.dirname(__file__), STD_LIB))
+    sys.path.append("apps/python/LiveTelemetry/stdlib64")
+else:
+    sys.path.append("apps/python/LiveTelemetry/stdlib")
 os.environ["PATH"] = os.environ["PATH"] + ";."
 
 import ac
-import ssconnection
-from ssgui import Gui
-from sslog import log
+from lib.ss_connection import verify_server
+from lib.ss_gui import Gui
+from lib.ss_log import log
 
 # Manage the GUI
 GUI = Gui()
@@ -110,7 +113,7 @@ def acMain(ac_version):
     ac.setPosition(GUI.lb_status, 154, 370)
     ac.setSize(GUI.lb_status, 236, 370)
 
-    if ssconnection.verify_server():
+    if verify_server():
         GUI.set_status("Refresh app to start.")
     else:
         GUI.set_status("Server down, sorry.", True)
@@ -307,7 +310,7 @@ def listener_refresh(*args):
     global GUI
     GUI.set_status("")
     GUI.clear()
-    if ssconnection.verify_server():
+    if verify_server():
         GUI.update_setups()
     else:
         GUI.set_status("Server down, sorry.", True)

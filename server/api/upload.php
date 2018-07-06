@@ -34,7 +34,8 @@ if (DBConnection::connect()) {
         /**
          * Execute the query.
          */
-        if ($stmt = DBConnection::prepare($sql, $values) && $stmt->execute()) {
+        $stmt = DBConnection::prepare($sql, $values)
+        if ($stmt && $stmt->execute()) {
             $ret = $stmt->rowCount();
         }
     } else {
@@ -47,7 +48,8 @@ if (DBConnection::connect()) {
         /**
          * Execute the query.
          */
-        if ($stmt = DBConnection::prepare($sql, $values) && $stmt->execute()) {
+        $stmt = DBConnection::prepare($sql, $values);
+        if ($stmt && $stmt->execute()) {
             $ret = DBConnection::lastInsertId();
         }
     }
