@@ -7,15 +7,22 @@ require_once __DIR__ . "/../util/includes.php";
 $ret = false;
 
 /**
- * Mandatory parameters.
+ * Mandatory parameter.
  */
 $setup = json_decode(param("setup"));
 
 /**
+ * Check integrity.
+ */
+if (!$setup || !$setup->id) {
+    abortExecution(403, "Invalid setup uploaded.");
+}
+
+/**
  * Do something!
  */
-if (setup != null && DBConnection::isConnected()) {
-    if(setup.id > 0) {
+if (DBConnection::connect()) {
+    if ($setup->id > 0) {
         /**
          * Old setups, let's update it.
          */
@@ -54,8 +61,8 @@ if (setup != null && DBConnection::isConnected()) {
 $ret = json_encode($ret);
 if (isTest()) {
     header("Content-Type: text/html;charset=UTF-8");
-    die("<pre>$ret</pre>");
+    debug($ret);
 } else {
     header("Content-Type: application/json");
-    die($ret);
+    echo $ret;
 }
