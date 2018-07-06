@@ -37,7 +37,7 @@ if (DBConnection::isConnected()) {
     $sql = "SELECT *
               FROM setup
              WHERE TRUE AND $carSql AND $driverSql AND $trackSql
-             ORDER BY ac_version DESC, version_ts DESC
+             ORDER BY ac_version DESC, 'name' DESC
              LIMIT 15";
     if ($stmt = DBConnection::prepare($sql, $values) && $stmt->execute()) {
         $list = $stmt->fetchAll(PDO::FETCH_ASSOC);

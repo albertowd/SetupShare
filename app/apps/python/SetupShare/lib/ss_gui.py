@@ -1,13 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Setup Share Gui utils.
 """
-
 import math
 
+from lib.ss_connection import combo_list, download, upload
+from lib.ss_documents import list_setups, read_setup, write_setup
+from lib.ss_log import log
+from sim_info.sim_info import info
 import ac
-import ssconnection
-import ssdocuments
-import sslog
 
 
 class Driver:
@@ -16,7 +18,7 @@ class Driver:
     def __init__(self, name=""):
         self.current = 0
         self.name = name
-        self.setups = []
+        self.setups = {}
 
 
 class DriverList:
@@ -120,12 +122,12 @@ class Gui:
         if driver is not None:
             setup = driver.setups[driver.current]
             track = ac.getTrackName(0)
-            ini = ssconnection.download(car, driver.name, setup, track)
+            ini = download(id)
             if len(ini) > 100:
-                ssdocuments.write_setup(car, ini, setup, track)
-                sp = ssconnection.download(car, driver.name, setup, track, "sp")
+                write_setup(car, ini, setup, track)
+                sp = download(id, "sp")
                 if len(sp) > 100:
-                    ssdocuments.write_setup(car, sp, setup, track, "sp")
+                    write_setup(car, sp, setup, track, "sp")
                 self.set_status("{} downloaded.".format(setup))
             else:
                 self.set_status(ini, True)
@@ -213,23 +215,27 @@ class Gui:
         car = ac.getCarName(0)
         track = ac.getTrackName(0)
         # Updates the user setups.
-        self.driver.setups = ssdocuments.list_setups(car, track)
+        self.driver.setups = list_setups(car, track)
         self.update_setup()
 
         # Updates the drivers setups.
         self.drivers.clear()
-        setups = ssconnection.available(car, track)
-        if isinstance(setups, list):
-            self.drivers.update(setups)
+        self.drivers.update(combo_list(car, track))
 
     def upload(self):
         """ Uploads the current setup to the server. """
-        car = ac.getCarName(0)
-        setup = self.driver.setups[self.driver.current]
-        track = ac.getTrackName(0)
-        ini_content = ssdocuments.read_setup(car, setup, track)
-        sp_content = ssdocuments.read_setup(car, setup, track, "sp")
-        if len(ini_content) == 0:
+        name = self.driver.setups[self.driver.current]
+        ini_content = read_setup(ac.getCarName(0), name, ac.getTrackName(0))
+        if ini_content == None:
             self.set_status("Invalid setup.", True)
         else:
-            self.set_status(ssconnection.upload(car, self.driver.name, ini_content, setup, sp_content, track))
+            setup = {}
+            setup["ac_version"] = info.static._acVersion
+            setup["car"] = ac.getCarName(0)
+            setup["driver"] = self.driver.name
+            setup["ini"] = ini_content
+            setup["name"] = name
+            setup["sp"] = read_setup(ac.getCarName(0), name, ac.getTrackName(0), "sp")
+            setup["track"] = ac.getTrackName(0)
+            upload_status = upload(setup)
+            self.set_status("Uploaded" if upload_status is True else "Not uploaded", upload_status)
