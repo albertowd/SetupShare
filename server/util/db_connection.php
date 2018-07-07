@@ -112,6 +112,8 @@ class DBConnection
                 $elapsed = time() - $start;
                 debug("Executed: {$elapsed}s.");
             } catch (PDOException $ex) {
+                error_log($sql);
+                error_log(print_r($values, true));
                 error_log($ex->getMessage());
             }
         } else {

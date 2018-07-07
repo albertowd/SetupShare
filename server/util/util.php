@@ -33,13 +33,7 @@ function abortExecution(int $code = 403, string $message = "Please don't.")
 function debug($obj)
 {
     if (isTest()) {
-        if (is_string($obj)) {
-            echo BR . $obj;
-        } else {
-            echo BR . "<pre>";
-            var_dump($obj);
-            echo "</pre>";
-        }
+        echo BR . "<pre>" . print_r($obj, true) . "</pre>";
     }
 }
 

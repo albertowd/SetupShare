@@ -4,7 +4,7 @@ rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 name\">{name}</div>";
 rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 track\">{track}</div>";
 rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 car\">{car}</div>";
 rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\" title=\"{title}\">{mod}</div>";
-rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\"><a class=\"btn btn-danger download w-100\" onclick=\"downloadSetup({id})\">Download</a></div></div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\"><a class=\"btn btn-danger download w-100\" download onclick=\"downloadSetup({id})\">Download</a></div></div>";
 
 /**
  * Makes the download of the ini and sp files of a setup.
@@ -28,11 +28,11 @@ function downloadSetup(id) {
  * 
  * @param id
  *            Setup identifier.
- * @param extension
+ * @param ext
  *            Extension of the file (ini or sp).
  * @returns The encoded URL.
  */
-function makeUrl(id, extension) {
+function makeUrl(id, ext) {
 	return "api/download.php?ext=" + ext + "&id=" + id;
 }
 
@@ -42,9 +42,9 @@ function makeUrl(id, extension) {
 function loadList() {
 	$("#mask").toggleClass("d-none", false);
 	var filter = "car=" + $("#car").val();
-	filter = filter + "driver=" + $("#driver").val();
-	filter = filter + "name=" + $("#name").val();
-	filter = filter + "track=" + $("#track").val();
+	filter += "&driver=" + $("#driver").val();
+	filter += "&name=" + $("#name").val();
+	filter += "&track=" + $("#track").val();
 	$.ajax("api/list.php?" + filter).done(function (data) {
 		updateList(data);
 	}).fail(function () {
@@ -61,6 +61,8 @@ function loadList() {
 function updateList(setupList) {
 	$(".setup").remove();
 	$("#empty").toggleClass("d-none", setupList.length > 0);
+
+	var rows = $("#rows");
 	$.each(setupList, function (index, setup) {
 		var row = rowTempalte.replace("{driver}", setup.driver);
 		row = row.replace("{car}", setup.car).replace("{car}", setup.car);
@@ -70,7 +72,7 @@ function updateList(setupList) {
 		row = row.replace("{name}", setup.name);
 		row = row.replace("{mod}", setup.version_ts);
 		row = row.replace("{track}", setup.track);
-		rows.append(row);
+		rows.append($.parseHTML(row));
 	});
 }
 

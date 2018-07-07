@@ -41,9 +41,10 @@ if ($setup == null) {
         header("Content-Type: text/html;charset=UTF-8");
         debug($setup->ext);
     } else {
-        header("Content-Disposition: attachment;filename=\"{$setup->name}\"");
+        header("Content-Disposition: attachment;filename=\"{$setup->name}.{$ext}\"");
         header("Content-Length: " . mb_strlen($setup->$ext));
-        header("Content-Type: application/octet-stream;");
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Type: application/force-download;");
         echo $setup->$ext;
     }
 }
