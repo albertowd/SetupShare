@@ -15,7 +15,7 @@ $setup = json_decode(param("setup"));
  * Check integrity.
  */
 if (!$setup || !$setup->id) {
-    abortExecution(403, "Invalid setup uploaded.");
+    abortExecution(403, "Setup is not valid.");
 }
 
 /**
@@ -33,10 +33,8 @@ if (DBConnection::connect()) {
     $sql = "SELECT id
               FROM setup
              WHERE car = ? AND driver = ? AND 'name' = ?, track = ?";
-    if ($stmt = DBConnection::prepare($sql, array($setup->car, $setup->driver, $setup->name, $setup->track))) {
-        if ($row = $stmt->fetchObject()) {
-            $id = $row->id;
-        }
+    if ($stmt = DBConnection::prepare($sql, array($setup->car, $setup->driver, $setup->name, $setup->track)) && $row = $stmt->fetchObject()) {
+        $id = $row->id;
     }
 
     if ($id > 0) {
@@ -51,7 +49,7 @@ if (DBConnection::connect()) {
          * Execute the query.
          */
         if ($stmt = DBConnection::prepare($sql, array($setup->ac_version, $setup->ini, $setup->sp, $id))) {
-            $ret = $stmt->rowCount();
+            $ret = $stmt->rowCount() > 0 ? "Setup updated." : "Setup not updated.";
         }
     } else {
         /**
@@ -64,7 +62,7 @@ if (DBConnection::connect()) {
          * Execute the query.
          */
         if ($stmt = DBConnection::prepare($sql, $values)) {
-            $ret = DBConnection::lastInsertId();
+            $ret = "Setup uploaded.";
         }
     }
 }
@@ -72,11 +70,9 @@ if (DBConnection::connect()) {
 /**
  * Return the new id or success of the uploaded setup.
  */
-$ret = json_encode($ret);
+header("Content-Type: text/html;charset=UTF-8");
 if (isTest()) {
-    header("Content-Type: text/html;charset=UTF-8");
     debug($ret);
 } else {
-    header("Content-Type: application/json");
     echo $ret;
 }
