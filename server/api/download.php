@@ -44,8 +44,8 @@ if ($setup == null || $setup->$ext == null) {
     {
         header("Content-Disposition: attachment;filename=\"{$setup->name}.{$ext}\"");
         header("Content-Length: " . mb_strlen($setup->$ext));
-        header("Content-Transfer-Encoding: binary");
-        header("Content-Type: text/html");
+        //header("Content-Transfer-Encoding: binary");
+        //header("Content-Type: text/html");
         echo $setup->$ext;
     }
 }

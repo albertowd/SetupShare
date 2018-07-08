@@ -1,9 +1,9 @@
 var rowTempalte = "<div class=\"{color} py-3 setup row\">";
-rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 driver\">{driver}</div>";
-rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 name\">{name}</div>";
-rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 track\">{track}</div>";
-rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 car\">{car}</div>";
-rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\" title=\"{title}\">{ver}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 driver\" title=\"{dtitle}\">{driver}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 name\" title=\"{ntitle}\">{name}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 track\" title=\"{ttitle}\">{track}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2 car\" title=\"{ctitle}\">{car}</div>";
+rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\" title=\"{vtitle}\">{ver}</div>";
 rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\"><a class=\"btn btn-danger download w-100\" onclick=\"downloadSetup({id},{sp})\">Download</a></div></div>";
 
 /**
@@ -68,15 +68,14 @@ function updateList(setupList) {
 	var rows = $("#rows");
 	$.each(setupList, function (index, setup) {
 		var ts = new Date(setup.version_ts).toLocaleString();
-		var row = rowTempalte.replace("{driver}", setup.driver);
-		row = row.replace("{car}", setup.car).replace("{car}", setup.car);
+		var row = rowTempalte.replace("{car}", setup.car).replace("{ctitle}", setup.car);
 		row = row.replace("{color}", index % 2 == 1 ? "even" : "");
+		row = row.replace("{driver}", setup.driver).replace("{dtitle}", setup.driver);
 		row = row.replace("{id}", setup.id);
-		row = row.replace("{title}", "AC Version: " + setup.ac_version + "\nUploaded: " + ts);
-		row = row.replace("{name}", (setup.sp ? "*" : "") + setup.name);
+		row = row.replace("{name}", (setup.sp ? "*" : "") + setup.name).replace("{ntitle}", setup.name);
 		row = row.replace("{sp}", setup.sp);
-		row = row.replace("{track}", setup.track);
-		row = row.replace("{ver}", "v" + setup.version.toString());
+		row = row.replace("{track}", setup.track).replace("{ttitle}", setup.track);
+		row = row.replace("{ver}", "v" + setup.version.toString()).replace("{vtitle}", "AC Version: " + setup.ac_version + "\nUploaded: " + ts);
 		rows.append($.parseHTML(row));
 	});
 }
