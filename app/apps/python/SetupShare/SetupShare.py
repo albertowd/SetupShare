@@ -126,7 +126,7 @@ def acMain(ac_version):
 
 def acShutdown():
     """ Called when the session ends (or restarts). """
-    log("Shuting down Community Setup...")
+    log("Shuting down Setup Share...")
     log("Success.")
 
 

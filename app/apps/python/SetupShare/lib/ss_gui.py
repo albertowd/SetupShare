@@ -18,7 +18,7 @@ class Driver:
     def __init__(self, name=""):
         self.current = 0
         self.name = name
-        self.setups = {}
+        self.setups = []
 
 
 class DriverList:
@@ -43,7 +43,7 @@ class DriverList:
     def driver_index(self, name):
         """ Returns the driver index on the list. """
         for driver_index in range(len(self.__drivers)):
-            if self.__drivers[driver_index].name is name:
+            if self.__drivers[driver_index].name == name:
                 return driver_index
         return -1
 
@@ -70,9 +70,11 @@ class DriverList:
     def update(self, setups):
         """ Updates drivers setups. """
         for setup in setups:
-            if self.driver_index(setup["driver"]) is -1:
+            driver_index = self.driver_index(setup["driver"])
+            if driver_index is -1:
                 self.__drivers.append(Driver(setup["driver"]))
-            self.__drivers[self.driver_index(setup["driver"])].setups.append(setup["name"])
+                driver_index = self.driver_index(setup["driver"])
+            self.__drivers[driver_index].setups.append((setup["id"], setup["name"]))
 
     def update_setup(self, index, page_index, add=0):
         """ Updates the driver setup index. """
@@ -122,15 +124,16 @@ class Gui:
         if driver is not None:
             setup = driver.setups[driver.current]
             track = ac.getTrackName(0)
-            ini = download(id)
-            if len(ini) > 100:
-                write_setup(car, ini, setup, track)
+            log("Downloading setup (car: {}, dirver: {}, name: {}, track: {}).".format(car, driver.name, setup[1], track))
+            ini = download(setup[0])
+            if ini != None:
+                write_setup(car, ini, setup[1], track)
                 sp = download(id, "sp")
-                if len(sp) > 100:
-                    write_setup(car, sp, setup, track, "sp")
-                self.set_status("{} downloaded.".format(setup))
+                if sp != None:
+                    write_setup(car, sp, setup[1], track, "sp")
+                self.set_status("{} downloaded.".format(setup[1]))
             else:
-                self.set_status(ini, True)
+                self.set_status("Download failed.", True)
         else:
             self.set_status("Invalid driver.", True)
 
@@ -168,7 +171,7 @@ class Gui:
 
             # Updates the setup, change and download buttons.
             has_setup = len(driver.setups) > 0
-            ac.setText(self.list[index]["setup"], "" if len(driver.setups) == 0 else driver.setups[driver.current])
+            ac.setText(self.list[index]["setup"], "" if len(driver.setups) == 0 else driver.setups[driver.current][1])
             ac.setVisible(self.list[index]["change"], 1 if has_setup else 0)
             ac.setVisible(self.list[index]["download"], 1 if has_setup else 0)
 
@@ -220,7 +223,9 @@ class Gui:
 
         # Updates the drivers setups.
         self.drivers.clear()
-        self.drivers.update(combo_list(car, track))
+        setups = combo_list(car, track)
+        log("Updating setups list from server (car: {}, track: {}): {} setup(s) found.".format(car, track, len(setups)))
+        self.drivers.update(setups)
 
     def upload(self):
         """ Uploads the current setup to the server. """
@@ -237,5 +242,6 @@ class Gui:
             setup["name"] = name
             setup["sp"] = read_setup(ac.getCarName(0), name, ac.getTrackName(0), "sp")
             setup["track"] = ac.getTrackName(0)
-            upload_status = upload(setup)
-            self.set_status("Uploaded" if upload_status is True else "Not uploaded", upload_status)
+            upload_response = upload(setup)
+            log("Uploading setup {}: {}".format(name, upload_response))
+            self.set_status(upload_response, "not" in upload_response)

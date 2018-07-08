@@ -4,9 +4,12 @@
 Setup Share Connection utils.
 """
 from json import dumps
-from requests import get
+from requests import get, post
+import sys
 
-SS_API_SERVER = "http://192.168.15.2/albertowd.com.br/setupshare/api"
+from lib.ss_log import log
+
+SS_API_SERVER = "http://192.168.25.5/albertowd.com.br/setupshare/api"
 
 def combo_list(car, track):
     """ Gets the list os available setups of the car/track. """
@@ -15,25 +18,23 @@ def combo_list(car, track):
     return response.json() if response.status_code == 200 else []
 
 
-def download(id, extension="ini"):
+def download(setup_id, ext="ini"):
     """ Downloads a specific setup. """
     global SS_API_SERVER
-    response = get("{}/download.php?id={}&ext={}".format(SS_API_SERVER, id, extension), timeout=5)
+    response = get("{}/download.php?id={}&ext={}".format(SS_API_SERVER, setup_id, ext), timeout=5)
     return response.text if response.status_code == 200 else None
 
 
 def upload(setup):
     """ Uploads the user setup. """
     global SS_API_SERVER
-    response = get("{}/upload.php?setup={}".format(SS_API_SERVER, dumps(setup)), timeout=5)
-    return True if response.status_code == 200 else False
+    return post("{}/upload.php".format(SS_API_SERVER), data=dumps(setup), timeout=5).text
 
 
 def verify_server():
     """ Verify the server connection. """
     global SS_API_SERVER
-    response = get("{}/download.php".format(SS_API_SERVER), timeout=5)
-    return response.status_code == 403
+    return get("{}/download.php".format(SS_API_SERVER), timeout=5).status_code == 403
 
 
 if __name__ == "__main__":
