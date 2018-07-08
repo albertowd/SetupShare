@@ -7,9 +7,7 @@ from json import dumps
 from requests import get, post
 import sys
 
-from lib.ss_log import log
-
-SS_API_SERVER = "http://192.168.25.5/albertowd.com.br/setupshare/api"
+SS_API_SERVER = "http://albertowd.com.br/setupshare/api"
 
 def combo_list(car, track):
     """ Gets the list os available setups of the car/track. """

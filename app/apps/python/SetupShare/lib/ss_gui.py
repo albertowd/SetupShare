@@ -124,7 +124,7 @@ class Gui:
         if driver is not None:
             setup = driver.setups[driver.current]
             track = ac.getTrackName(0)
-            log("Downloading setup (car: {}, dirver: {}, name: {}, track: {}).".format(car, driver.name, setup[1], track))
+            log("Downloading setup (car: {}, dirver: {}, name: {}, track: {})...".format(car, driver.name, setup[1], track))
             ini = download(setup[0])
             if ini != None:
                 write_setup(car, ini, setup[1], track)
@@ -146,6 +146,7 @@ class Gui:
 
     def set_status(self, message, error=False):
         """ Sets the error or done status. """
+        log(message)
         self.done = "" if error else message
         self.error = message if error else ""
 
@@ -223,8 +224,9 @@ class Gui:
 
         # Updates the drivers setups.
         self.drivers.clear()
+        log("Updating setup list from server (car: {}, track: {})...".format(car, track))
         setups = combo_list(car, track)
-        log("Updating setups list from server (car: {}, track: {}): {} setup(s) found.".format(car, track, len(setups)))
+        log("{} setup(s) found.".format(len(setups)))
         self.drivers.update(setups)
 
     def upload(self):
@@ -242,6 +244,6 @@ class Gui:
             setup["name"] = name
             setup["sp"] = read_setup(ac.getCarName(0), name, ac.getTrackName(0), "sp")
             setup["track"] = ac.getTrackName(0)
+            log("Uploading setup {}...".format(name))
             upload_response = upload(setup)
-            log("Uploading setup {}: {}".format(name, upload_response))
             self.set_status(upload_response, "not" in upload_response)
