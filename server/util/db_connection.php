@@ -25,6 +25,7 @@ class DBConnection
         if (static::$connection == null) {
             try {
                 static::$connection = new PDO("mysql:charset=utf8;dbname=setup_share;host=localhost", "setup_user", "setup_2018");
+                static::$connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
                 static::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $ex) {
                 debug($ex->getMessage());

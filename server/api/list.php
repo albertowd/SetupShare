@@ -34,17 +34,16 @@ if (DBConnection::connect()) {
     /**
      * Execute the query.
      */
-    $sql = "SELECT *
+    $sql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts
               FROM setup
              WHERE TRUE AND $carSql AND $driverSql AND $trackSql
              ORDER BY ac_version DESC, `name` DESC
              LIMIT 15";
     if ($stmt = DBConnection::prepare($sql, $filters)) {
-        $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $list = $stmt->fetchAll(PDO::FETCH_OBJ);
         foreach ($list as &$setup) {
-            $setup["name"] = ($setup["sp"] != null ? "* " : "") . $setup["name"];
-            unset($setup["ini"]);
-            unset($setup["sp"]);
+            $setup->sp = $setup->sp != null;
+            $setup->version_ts = strtotime($setup->version_ts) * 1000;
         }
     }
 }

@@ -34,17 +34,18 @@ if (DBConnection::connect()) {
 /**
  * Return the setup.
  */
-if ($setup == null) {
+if ($setup == null || $setup->$ext == null) {
     abortExecution(404, "Setup not found");
 } else {
     if (isTest()) {
         header("Content-Type: text/html;charset=UTF-8");
-        debug($setup->ext);
-    } else {
+        debug($setup->$ext);
+    }
+    {
         header("Content-Disposition: attachment;filename=\"{$setup->name}.{$ext}\"");
         header("Content-Length: " . mb_strlen($setup->$ext));
         header("Content-Transfer-Encoding: binary");
-        header("Content-Type: application/force-download;");
+        header("Content-Type: text/html");
         echo $setup->$ext;
     }
 }
