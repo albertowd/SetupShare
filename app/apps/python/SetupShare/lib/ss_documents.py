@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Setup Share Document utils.
 """
@@ -16,7 +18,7 @@ def setup_dir():
 
 def read_setup(car, setup, track, extension="ini"):
     """ Returns the content of the setup .ini or .sp. """
-    content = ""
+    content = None
     content_path = "{}/{}/{}/{}.{}".format(setup_dir(), car, track, setup, extension)
     if os.path.isfile(content_path):
         with open(content_path, "r") as content_file:
