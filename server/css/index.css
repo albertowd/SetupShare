@@ -5,7 +5,7 @@ body {
 }
 
 div, h1, p {
-	color: #FFFFFF;
+	color: #fff;
 }
 
 html {
@@ -16,18 +16,44 @@ html {
 	background-repeat: no-repeat;
 }
 
+#mask {
+	background-color: rgba(0, 0, 0, 0.3);
+	background-image: url("../img/loading.svg");
+	background-position: center;
+	background-repeat: no-repeat;
+	display: none;
+	bottom: 5px;
+	left: 5px;
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	z-index: 1;
+}
+
+#rows {
+	min-height: 30px;
+	position: relative;
+}
+
 .btn-danger {
-	background-color: #be0000;
-	border-color: #FFFFFF;
+	background-color: transparent;
+	border-color: #fff;
 	border-width: 3px;
 }
 
-.download {
-	background-color: transparent;
+.btn-danger:hover {
+	background-color: #bd0000;
+	border-color: #fff;
+	border-width: 3px;
 }
 
 .even {
 	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.row>div {
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .search {
