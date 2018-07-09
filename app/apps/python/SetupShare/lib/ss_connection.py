@@ -12,7 +12,7 @@ SS_API_SERVER = "http://albertowd.com.br/setupshare/api"
 def combo_list(car, track):
     """ Gets the list os available setups of the car/track. """
     global SS_API_SERVER
-    response = get("{}/list.php?car={}&track={}".format(SS_API_SERVER, car, track), timeout=5)
+    response = get("{}/list.php?app&car={}&track={}".format(SS_API_SERVER, car, track), timeout=5)
     return response.json() if response.status_code == 200 else []
 
 
