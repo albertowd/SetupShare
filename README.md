@@ -26,6 +26,6 @@ The [page](http://albertowd.com.br/setupshare/) shows all the uploaded setups, u
 
 ## Changelog
 
-v 1.2:
-    * App: adapted to the handle the new server.
-    * Server: Chenged setups files to a database.
+v1.2:
+* App: adapted to the handle the new server.
+* Server: Chenged setups files to a database.
