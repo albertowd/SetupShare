@@ -146,7 +146,8 @@ class Gui:
 
     def set_status(self, message, error=False):
         """ Sets the error or done status. """
-        log(message)
+        if len(message) > 0:
+            log(message)
         self.done = "" if error else message
         self.error = message if error else ""
 
@@ -223,8 +224,8 @@ class Gui:
         self.update_setup()
 
         # Updates the drivers setups.
-        self.drivers.clear()
         log("Updating setup list from server (car: {}, track: {})...".format(car, track))
+        self.drivers.clear()
         setups = combo_list(car, track)
         log("{} setup(s) found.".format(len(setups)))
         self.drivers.update(setups)
