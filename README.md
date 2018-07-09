@@ -9,6 +9,7 @@ The app works on saved setups/pit strategyies used by your car and track in the 
 
 First unzip the release content direct on your assetto corsa main folder (C:/Program Files (x86)/steam/steamapps/common/assettocorsa) and load the game.
 Select the option menu and the general sub menu in-game to activate the SetupShare app. In the UI Module section will be listed this app to be checked.
+![Enabling the app in-game.](https://raw.githubusercontent.com/albertowd/SetupShare/master/img/SS-Menu.gif)
 Last step is to enter a session (online, practice, race..) and select it on the right app bar to see it on screen.
 
 ### Downloading and uploading
@@ -16,7 +17,7 @@ Last step is to enter a session (online, practice, race..) and select it on the 
 This app doesn't apply a downloaded setup automatically neither upload an unsaved one.
 The first line of the app contains the list of the users computer setups. The selected setup can be uploaded to the system, updating it if it's already in "the cloud".
 The rest of the view contains the list of uploaded setups groupped by users. Selecting one and downloading it will write or overwrite the setup on the users computer.
-
+![Using the app.](https://raw.githubusercontent.com/albertowd/SetupShare/master/img/SS-Session.gif)
 
 ## Web
 
