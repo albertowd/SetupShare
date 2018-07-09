@@ -37,8 +37,7 @@ if (DBConnection::connect()) {
     $sql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts
               FROM setup
              WHERE TRUE AND $carSql AND $driverSql AND $trackSql
-             ORDER BY ac_version DESC, `name` DESC
-             LIMIT 15";
+             ORDER BY ac_version DESC, `name` DESC" . (param("app") == null ? "LIMIT 15" : "");
     if ($stmt = DBConnection::prepare($sql, $filters)) {
         $list = $stmt->fetchAll(PDO::FETCH_OBJ);
         foreach ($list as &$setup) {
