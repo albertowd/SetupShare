@@ -56,6 +56,10 @@ html {
 	text-overflow: ellipsis;
 }
 
+.row>div>img {
+	vertical-align: baseline;
+}
+
 .search {
 	background-color: #454545;
 }

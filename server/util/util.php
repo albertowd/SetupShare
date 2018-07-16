@@ -51,13 +51,13 @@ function isTest()
  *
  * @param string $name
  *            Parameter name.
- * @param bool $forceNull
- *            True return null if there's no value.
- * @return string|null
+ * @param mixed $defaultValue
+ *            The default value if the param does not exists.
+ * @return string|mixed
  */
-function param(string $name, bool $forceNull = true)
+function param(string $name, $defaultValue = null)
 {
-    $param = $forceNull ? null : "";
+    $param = $defaultValue;
     if (isset($_REQUEST[$name]) && strlen($_REQUEST[$name]) > 0) {
         $param = $_REQUEST[$name];
     }

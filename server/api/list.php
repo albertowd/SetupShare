@@ -12,6 +12,7 @@ $list = array();
 $car = param("car");
 $driver = param("driver");
 $name = param("name");
+$steamId = intval(param("id", "0"));
 $track = param("track");
 
 /**
@@ -21,23 +22,45 @@ if (DBConnection::connect()) {
     /**
      * Check the filters.
      */
-    $carSql = $car != null ? "car LIKE ?" : "TRUE";
-    $driverSql = $driver != null ? "driver LIKE ?" : "TRUE";
-    $nameSql = $name != null ? "`name` LIKE ?" : "TRUE";
-    $trackSql = $track != null ? "track LIKE ?" : "TRUE";
+    $carSql = $car ? "car LIKE :car" : "TRUE";
+    $driverSql = $driver ? "driver LIKE :driver" : "TRUE";
+    $friendsSetupSql = "";
+    $nameSql = $name ? "`name` LIKE :name" : "TRUE";
+    $mySetupSql = "";
+    $trackSql = $track ? "track LIKE :trak" : "TRUE";
+
     $filters = array();
-    if ($car != null) {array_push($filters, $car);}
-    if ($driver != null) {array_push($filters, $driver);}
-    if ($driver != null) {array_push($filters, $nameSql);}
-    if ($track != null) {array_push($filters, $track);}
+    if ($car) {$filters[":car"] = $car;}
+    if ($driver) {$filters[":driver"] = $driver;}
+    if ($driver) {$filters[":name"] = $nameSql;}
+    if ($track) {$filters[":track"] = $track;}
+    if ($steamId > 0) {$filters[":steam_id"] = $steamId;}
+
+    /**
+     * Check own and friend's setups.
+     */
+    if ($steamId > 0) {
+        $friendList = implode(",", SteamAPI::getFriendIds(intval($steamId)));
+
+        $mySetupSql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts, visibility
+                         FROM setup
+                        WHERE TRUE AND ($carSql AND $driverSql AND $trackSql AND steam_id = :steam_id AND visibility = 2)";
+        $mySetupSql = "UNION $mySetupSql";
+
+        $friendsSetupSql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts, visibility
+                              FROM setup
+                             WHERE TRUE AND ($carSql AND $driverSql AND $trackSql AND steam_id IN($friendList) AND visibility = 1)";
+        $friendsSetupSql = "UNION $friendsSetupSql";
+    }
 
     /**
      * Execute the query.
      */
-    $sql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts
+    $sql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts, visibility
               FROM setup
-             WHERE TRUE AND $carSql AND $driverSql AND $trackSql
-             ORDER BY ac_version DESC, `name` DESC" . (param("app") == null ? "LIMIT 15" : "");
+             WHERE TRUE AND $carSql AND $driverSql AND $trackSql AND visibility = 0
+             $mySetupSql $friendsSetupSql
+             ORDER BY ac_version DESC, `name` DESC " . (param("app") == null ? "LIMIT 15" : "");
     if ($stmt = DBConnection::prepare($sql, $filters)) {
         $list = $stmt->fetchAll(PDO::FETCH_OBJ);
         foreach ($list as &$setup) {
