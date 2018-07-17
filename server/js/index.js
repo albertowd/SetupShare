@@ -7,6 +7,20 @@ rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\" title=\":vtitle\">:ve
 rowTempalte = rowTempalte + "<div class=\"col-6 col-md-2\"><a class=\"btn btn-danger download w-100\" onclick=\"downloadSetup(:id,:sp)\">Download</a></div></div>";
 
 /**
+ * Check the setup count on the system.
+ */
+function checkCount() {
+	$.ajax("api/count.php").done(function (count) {
+		var footer = $("footer");
+		footer.text(count + " setups on the system - " + footer.text());
+	}).fail(function () {
+		var footer = $("footer");
+		footer.text("System offline - " + footer.text());
+		footer.toggleClass("bg-danger", true);
+	});
+}
+
+/**
  * Makes the download of the ini and sp files of a setup.
  * 
  * @param id
@@ -103,5 +117,6 @@ function updateList(setupList) {
 }
 
 $(document).ready(function () {
+	checkCount();
 	loadList();
 });

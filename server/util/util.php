@@ -25,6 +25,17 @@ function abortExecution(int $code = 403, string $message = "Please don't.")
 }
 
 /**
+ * Verifies the app version with the server version.
+ */
+function checkVersion()
+{
+    $appVersion = param("ver", "0");
+    if ($appVersion != "0" && $appVersion != "1.2") {
+        abortExecution(403, "Please use app v1.2.");
+    }
+}
+
+/**
  * Var_dumps the object with <pre> tags.
  *
  * @param mixed $obj
@@ -63,3 +74,8 @@ function param(string $name, $defaultValue = null)
     }
     return $param;
 }
+
+/**
+ * Call the version check when this file is required.
+ */
+checkVersion();
