@@ -9,10 +9,24 @@ $list = array();
 /**
  * Optional parameters.
  */
+$app = isset($_REQUEST["app"]);
 $car = param("car");
+if (!$app && $car) {
+    $car = "%$car%";
+}
 $driver = param("driver");
+if (!$app && $driver) {
+    $driver = "%$driver%";
+}
 $name = param("name");
+if (!$app && $name) {
+    $name = "%$name%";
+}
+$steamId = intval(param("id", "0"));
 $track = param("track");
+if (!$app && $track) {
+    $track = "%$track%";
+}
 
 /**
  * Do something!
@@ -21,23 +35,53 @@ if (DBConnection::connect()) {
     /**
      * Check the filters.
      */
-    $carSql = $car != null ? "car LIKE ?" : "TRUE";
-    $driverSql = $driver != null ? "driver LIKE ?" : "TRUE";
-    $nameSql = $name != null ? "`name` LIKE ?" : "TRUE";
-    $trackSql = $track != null ? "track LIKE ?" : "TRUE";
+    $carSql = $car ? "car LIKE ?" : "TRUE";
+    $driverSql = $driver ? "driver LIKE ?" : "TRUE";
+    $friendsSetupSql = "";
+    $nameSql = $name ? "`name` LIKE ?" : "TRUE";
+    $mySetupSql = "";
+    $trackSql = $track ? "track LIKE ?" : "TRUE";
+
     $filters = array();
-    if ($car != null) {array_push($filters, $car);}
-    if ($driver != null) {array_push($filters, $driver);}
-    if ($driver != null) {array_push($filters, $nameSql);}
-    if ($track != null) {array_push($filters, $track);}
+    if ($car) {$filters[] = $car;}
+    if ($driver) {$filters[] = $driver;}
+    if ($name) {$filters[] = $name;}
+    if ($track) {$filters[] = $track;}
+
+    /**
+     * Check own and friend's setups.
+     */
+    if ($steamId > 0) {
+        $friendList = implode(",", SteamAPI::getFriendIds(intval($steamId)));
+        $friendsSetupSql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts, visibility
+                                      FROM setup
+                                     WHERE TRUE AND ($carSql AND $driverSql AND $nameSql AND $trackSql AND steam_id IN($friendList) AND visibility = 1)";
+        $friendsSetupSql = "UNION $friendsSetupSql";
+        if ($car) {$filters[] = $car;}
+        if ($driver) {$filters[] = $driver;}
+        if ($name) {$filters[] = $name;}
+        if ($track) {$filters[] = $track;}
+
+        $mySetupSql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts, visibility
+                         FROM setup
+                        WHERE TRUE AND ($carSql AND $driverSql AND $nameSql AND $trackSql AND steam_id = ?)";
+        $mySetupSql = "UNION $mySetupSql";
+        if ($car) {$filters[] = $car;}
+        if ($driver) {$filters[] = $driver;}
+        if ($name) {$filters[] = $name;}
+        if ($track) {$filters[] = $track;}
+        $filters[] = $steamId;
+    }
 
     /**
      * Execute the query.
      */
-    $sql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts
+    $sql = "SELECT ac_version, car, driver, id, `name`, sp, track, `version`, version_ts, visibility
               FROM setup
-             WHERE TRUE AND $carSql AND $driverSql AND $trackSql
-             ORDER BY ac_version DESC, `name` DESC" . (param("app") == null ? "LIMIT 15" : "");
+             WHERE TRUE AND $carSql AND $driverSql AND $nameSql AND $trackSql AND visibility = 0
+             $friendsSetupSql $mySetupSql
+             ORDER BY ac_version DESC, `name` DESC " . ($app ? "" : "LIMIT 15");
+    debug($filters);
     if ($stmt = DBConnection::prepare($sql, $filters)) {
         $list = $stmt->fetchAll(PDO::FETCH_OBJ);
         foreach ($list as &$setup) {
@@ -52,7 +96,6 @@ if (DBConnection::connect()) {
  */
 $list = json_encode($list);
 if (isTest()) {
-    header("Content-Type: text/html;charset=UTF-8");
     debug($list);
 } else {
     header("Content-Type: application/json");

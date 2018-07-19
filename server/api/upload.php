@@ -34,8 +34,8 @@ if (DBConnection::connect()) {
      */
     $sql = "SELECT id
               FROM setup
-             WHERE car = ? AND driver = ? AND `name` = ? AND track = ?";
-    $stmt = DBConnection::prepare($sql, array($setup->car, $setup->driver, $setup->name, $setup->track));
+             WHERE car = ? AND `name` = ? AND steam_id = ? AND track = ?";
+    $stmt = DBConnection::prepare($sql, array($setup->car, $setup->name, $setup->steam_id, $setup->track));
     if ($stmt && $row = $stmt->fetchObject()) {
         $id = $row->id;
     }
@@ -45,28 +45,29 @@ if (DBConnection::connect()) {
          * Old setups, let's update it.
          */
         $sql = "UPDATE setup
-                   SET ac_version = ?, ini = ?, sp = ?, `version` = `version` + 1
+                   SET ac_version = ?, driver = ?, ini = ?, sp = ?, `version` = `version` + 1, visibility = ?
                  WHERE id = ?";
 
         /**
          * Execute the query.
          */
-        $stmt = DBConnection::prepare($sql, array($setup->ac_version, $setup->ini, $setup->sp, $id));
+        $stmt = DBConnection::prepare($sql, array($setup->ac_version, $setup->driver, $setup->ini, $setup->sp, $setup->visibility, $id));
         if ($stmt) {
-            $ret = $stmt->rowCount() > 0 ? "Setup updated." : "Setup not updated.";
+            $ret = $stmt->rowCount() > 0 ? "$setup->name updated." : "$setup->name not updated.";
         }
     } else {
         /**
          * New setup, time to insert.
          */
-        $sql = "INSERT INTO setup(ac_version, car, driver, ini, `name`, sp, track)
-                VALUES(?, ?, ?, ?, ?, ?, ?)";
-        $values = array($setup->ac_version, $setup->car, $setup->driver, $setup->ini, $setup->name, $setup->sp, $setup->track);
+        $sql = "INSERT INTO setup(ac_version, car, driver, ini, `name`, sp, steam_id, track, visibility)
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $values = array($setup->ac_version, $setup->car, $setup->driver, $setup->ini,
+            $setup->name, $setup->sp, $setup->steam_id, $setup->track, $setup->visibility);
         /**
          * Execute the query.
          */
         if ($stmt = DBConnection::prepare($sql, $values)) {
-            $ret = "Setup uploaded.";
+            $ret = "$setup->name uploaded.";
         }
     }
 }
@@ -74,9 +75,9 @@ if (DBConnection::connect()) {
 /**
  * Return the new id or success of the uploaded setup.
  */
-header("Content-Type: text/html;charset=UTF-8");
 if (isTest()) {
     debug($ret);
 } else {
+    header("Content-Type: text/html;charset=UTF-8");
     echo $ret;
 }

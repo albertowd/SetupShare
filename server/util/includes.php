@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/db_connection.php";
+require_once __DIR__ . "/steam.php";
 require_once __DIR__ . "/util.php";
 session_start();
 

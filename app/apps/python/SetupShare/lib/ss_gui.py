@@ -3,6 +3,7 @@
 """
 Setup Share Gui utils.
 """
+import datetime
 import math
 
 from lib.ss_connection import combo_list, download, upload
@@ -74,7 +75,7 @@ class DriverList:
             if driver_index is -1:
                 self.__drivers.append(Driver(setup["driver"]))
                 driver_index = self.driver_index(setup["driver"])
-            self.__drivers[driver_index].setups.append((setup["id"], setup["name"]))
+            self.__drivers[driver_index].setups.append((setup["id"], setup["name"], setup["sp"], setup["visibility"]))
 
     def update_setup(self, index, page_index, add=0):
         """ Updates the driver setup index. """
@@ -95,6 +96,10 @@ class Gui:
         self.app_window = 0
         self.bt_change = 0
         self.bt_left = 0
+        self.bt_pit = 0
+        self.bt_private = 0
+        self.bt_protected = 0
+        self.bt_public = 0
         self.bt_refresh = 0
         self.bt_right = 0
         self.bt_status_done = 0
@@ -111,6 +116,64 @@ class Gui:
         self.list = []
         self.page = 0
         self.server = True
+        self.visibility = 0
+        self.visibility_ts = datetime.datetime.now()
+    
+    def __update_driver_list(self):
+        """ Updates the driver list. """
+        drivers = self.drivers.page(self.page)
+        for index, driver in enumerate(drivers):
+            # Updates the label of the driver.
+            ac.setText(self.list[index]["label"], driver.name)
+
+            # Updates the setup, change and download buttons.
+            setup_count = len(driver.setups)
+            ac.setVisible(self.list[index]["change"], 1 if setup_count > 1 else 0)
+            if setup_count > 0:
+                setup = driver.setups[driver.current]
+                ac.setText(self.list[index]["setup"], setup[1])
+                ac.setVisible(self.list[index]["download"], 1)
+                ac.setVisible(self.list[index]["pit"], 1 if setup[2] == 1 else 0)
+                ac.setVisible(self.list[index]["private"], 1 if setup[3] == 2 else 0)
+                ac.setVisible(self.list[index]["protected"], 1 if setup[3] == 1 else 0)
+                ac.setVisible(self.list[index]["public"], 1 if setup[3] == 0 else 0)
+            else:
+                ac.setText(self.list[index]["setup"], "")
+                ac.setVisible(self.list[index]["download"], 0)
+                ac.setVisible(self.list[index]["pit"], 0)
+                ac.setVisible(self.list[index]["private"], 0)
+                ac.setVisible(self.list[index]["protected"], 0)
+                ac.setVisible(self.list[index]["public"], 0)
+    
+    def __update_driver_row(self):
+        """ Updates the driver row. """
+        setup_count = len(self.driver.setups)
+        if setup_count == 0:
+            ac.setVisible(self.lb_mine, 0)
+            ac.setText(self.lb_setup, "No setups")
+            ac.setVisible(self.bt_change, 0)
+            ac.setVisible(self.bt_upload, 0)
+            ac.setVisible(self.bt_pit, 0)
+            ac.setPosition(self.bt_private, 424, -99999)
+            ac.setPosition(self.bt_protected, 424, -99999)
+            ac.setPosition(self.bt_public, 424, -99999)
+        else:
+            name = self.driver.setups[self.driver.current]
+            ac.setVisible(self.lb_mine, 1)
+            ac.setText(self.lb_setup, name)
+            ac.setVisible(self.bt_change, 1 if setup_count > 1 else 0)
+            ac.setVisible(self.bt_upload, 1)
+            ac.setVisible(self.bt_pit, 1 if read_setup(ac.getCarName(0), name, ac.getTrackName(0), "sp") != None else 0)
+            ac.setPosition(self.bt_private, 424, 40 if self.visibility == 2 else -99999)
+            ac.setPosition(self.bt_protected, 424, 40 if self.visibility == 1 else -99999)
+            ac.setPosition(self.bt_public, 424, 40 if self.visibility == 0 else -99999)
+
+    def change_visibility(self):
+        """ Change the visibility of the setup to upload. """
+        ts = datetime.datetime.now()
+        if (ts - self.visibility_ts).seconds > 0:
+            self.visibility = (self.visibility + 1) % 3
+            self.visibility_ts = ts
 
     def clear(self):
         """ Clear the state of the GUI. """
@@ -137,7 +200,7 @@ class Gui:
         else:
             self.set_status("Invalid driver.", True)
 
-    def img_buttow(self, icon, width=24, height=24):
+    def img_button(self, icon, width=24, height=24):
         """ Creates a nem icon button. """
         button_id = ac.addButton(self.app_window, "")
         ac.setBackgroundTexture(button_id, "apps/python/SetupShare/img/{}.png".format(icon))
@@ -153,29 +216,8 @@ class Gui:
 
     def update(self):
         """ Updates the interface. """
-        # Updates the current setup.
-        if len(self.driver.setups) == 0:
-            ac.setVisible(self.lb_mine, 0)
-            ac.setText(self.lb_setup, "No setups")
-            ac.setVisible(self.bt_change, 0)
-            ac.setVisible(self.bt_upload, 0)
-        else:
-            ac.setVisible(self.lb_mine, 1)
-            ac.setText(self.lb_setup, self.driver.setups[self.driver.current])
-            ac.setVisible(self.bt_change, 1)
-            ac.setVisible(self.bt_upload, 1)
-
-        # Updates the driver list.
-        drivers = self.drivers.page(self.page)
-        for index, driver in enumerate(drivers):
-            # Updates the label of the driver.
-            ac.setText(self.list[index]["label"], driver.name)
-
-            # Updates the setup, change and download buttons.
-            has_setup = len(driver.setups) > 0
-            ac.setText(self.list[index]["setup"], "" if len(driver.setups) == 0 else driver.setups[driver.current][1])
-            ac.setVisible(self.list[index]["change"], 1 if has_setup else 0)
-            ac.setVisible(self.list[index]["download"], 1 if has_setup else 0)
+        self.__update_driver_row()
+        self.__update_driver_list()
 
         # Updates the page infos.
         ac.setVisible(self.bt_left, 1 if self.page > 0 else 0)
@@ -245,6 +287,7 @@ class Gui:
             setup["name"] = name
             setup["sp"] = read_setup(ac.getCarName(0), name, ac.getTrackName(0), "sp")
             setup["track"] = ac.getTrackName(0)
+            setup["visibility"] = self.visibility
             log("Uploading setup {}...".format(name))
             upload_response = upload(setup)
             self.set_status(upload_response, "not" in upload_response)

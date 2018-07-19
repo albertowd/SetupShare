@@ -38,7 +38,6 @@ if ($setup == null || $setup->$ext == null) {
     abortExecution(404, "Setup not found");
 } else {
     if (isTest()) {
-        header("Content-Type: text/html;charset=UTF-8");
         debug($setup->$ext);
     }
     {
