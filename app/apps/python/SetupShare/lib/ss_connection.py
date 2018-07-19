@@ -7,8 +7,8 @@ from json import dumps
 from requests import get, post
 import sys
 
-SS_API_SERVER = "http://192.168.25.5/albertowd.com.br/setupshare/api"
-STEAM_ID = 76561197991651936
+SS_API_SERVER = "http://albertowd.com.br/setupshare/api"
+STEAM_ID = 0
 VERSION = "1.2"
 
 def combo_list(car, track):
