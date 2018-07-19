@@ -62,7 +62,8 @@ function loadList() {
 	filter += "&driver=" + $("#driver").val();
 	filter += "&name=" + $("#name").val();
 	filter += "&track=" + $("#track").val();
-	$.ajax("api/list.php?" + filter + "&" + window.location.search.substring(1)).done(function (data) {
+	var url = "api/list.php?" + filter + "&" + window.location.search.substring(1);
+	$.ajax(encodeURI(url)).done(function (data) {
 		updateList(data);
 	}).fail(function () {
 		alert("Sorry, it wasn't possible to load any setup.");

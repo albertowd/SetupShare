@@ -16,7 +16,10 @@ define("BR", "<br />");
 function abortExecution(int $code = 403, string $message = "Please don't.")
 {
     http_response_code($code);
-    header("Content-Type: text/html;charset=UTF-8");
+
+    if (!isTest()) {
+        header("Content-Type: text/html;charset=UTF-8");
+    }
 
     if (isTest()) {
         $message = BR . $message;
@@ -73,6 +76,13 @@ function param(string $name, $defaultValue = null)
         $param = $_REQUEST[$name];
     }
     return $param;
+}
+
+/**
+ * Modifyies the header before any echo.
+ */
+if (isTest()) {
+    header("Content-Type: text/html;charset=UTF-8");
 }
 
 /**

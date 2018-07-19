@@ -35,7 +35,7 @@ if (DBConnection::connect()) {
     $sql = "SELECT id
               FROM setup
              WHERE car = ? AND `name` = ? AND steam_id = ? AND track = ?";
-    $stmt = DBConnection::prepare($sql, array($setup->car, $setup->steam_id, $setup->name, $setup->track));
+    $stmt = DBConnection::prepare($sql, array($setup->car, $setup->name, $setup->steam_id, $setup->track));
     if ($stmt && $row = $stmt->fetchObject()) {
         $id = $row->id;
     }
@@ -60,7 +60,7 @@ if (DBConnection::connect()) {
          * New setup, time to insert.
          */
         $sql = "INSERT INTO setup(ac_version, car, driver, ini, `name`, sp, steam_id, track, visibility)
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $values = array($setup->ac_version, $setup->car, $setup->driver, $setup->ini,
             $setup->name, $setup->sp, $setup->steam_id, $setup->track, $setup->visibility);
         /**
@@ -75,9 +75,9 @@ if (DBConnection::connect()) {
 /**
  * Return the new id or success of the uploaded setup.
  */
-header("Content-Type: text/html;charset=UTF-8");
 if (isTest()) {
     debug($ret);
 } else {
+    header("Content-Type: text/html;charset=UTF-8");
     echo $ret;
 }

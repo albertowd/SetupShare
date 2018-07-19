@@ -21,5 +21,7 @@ if (DBConnection::connect()) {
 /**
  * Return the setup count.
  */
-header("Content-Type: text/html;charset=UTF-8");
+if (!isTest()) {
+    header("Content-Type: text/html;charset=UTF-8");
+}
 echo $count;
