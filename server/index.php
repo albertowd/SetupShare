@@ -1,3 +1,31 @@
+<?php
+require_once __DIR__ . "/util/steam.php";
+
+/**
+ * Check if it's a login callback.
+ */
+$steamId = SteamAPI::getId();
+if (!isset($_REQUEST["id"]) && $steamId > 0) {
+    header("Location: http://localhost/albertowd.com.br/setupshare/?id=$steamId");
+    die();
+}
+
+/**
+ * Put the login or the logged steam profile button.
+ */
+if (!isset($_REQUEST["id"])) {
+    $login = "&nbsp&nbsp&nbsp<a href=\"" . SteamAPI::getAuthUrl() . "\"><img alt=\"Login on steam.\" src=\"img/steam_login.png\"/></a>";
+} else {
+    $user = SteamAPI::getUser(intval($_REQUEST["id"]));
+    if ($user != null) {
+        $login = "<a class=\"btn btn-danger\" href=\"$user->profileurl\"><img alt=\"Logged avatar.\" height=\"20px\" src=\"$user->avatar\"/> $user->realname.</a>";
+    } else {
+        $login = "";
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en_US">
 
@@ -22,13 +50,18 @@
 </head>
 
 <body>
-    <div class="container-fluid p-5 text-center">
+    <div class="container p-5 text-center">
         <h1>
             <img src="img/Setup Share_ON.png" width="48px" /> Setup Share
         </h1>
         <p>A simple App for sharing setups within Assetto Corsa sessions.
         </p>
-        <a class="btn btn-danger" href="https://github.com/albertowd/SetupShare">Download App</a>
+        <div class="row">
+            <div class="col-12 col-md-6 py-3">
+                <a class="btn btn-danger" href="https://github.com/albertowd/SetupShare">Download App</a>
+            </div>
+            <div class="col-12 col-md-6 py-3"><?php echo $login; ?></div>
+        </div>
     </div>
     <div class="container-fluid">
         <div class="row py-3">
