@@ -1,0 +1,3 @@
+[submodule "modules/LightOpenId"]
+	path = modules/LightOpenId
+	url = https://github.com/iignatov/LightOpenID.git
