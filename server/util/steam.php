@@ -13,7 +13,7 @@ class SteamAPI
      */
     public static function getAuthUrl()
     {
-        $openid = new LightOpenID("localhost");
+        $openid = new LightOpenID("albertowd.com.br");
         $openid->identity = "https://steamcommunity.com/openid";
         return $openid->authUrl();
     }
@@ -52,7 +52,7 @@ class SteamAPI
      */
     public static function getId()
     {
-        $openid = new LightOpenID("localhost");
+        $openid = new LightOpenID("albertowd.com.br");
         $login = "";
 
         if (!$openid->mode) {

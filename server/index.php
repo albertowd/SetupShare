@@ -6,7 +6,7 @@ require_once __DIR__ . "/util/steam.php";
  */
 $steamId = SteamAPI::getId();
 if (!isset($_REQUEST["id"]) && $steamId > 0) {
-    header("Location: http://localhost/albertowd.com.br/setupshare/?id=$steamId");
+    header("Location: http://albertowd.com.br/setupshare/?id=$steamId");
     die();
 }
 
