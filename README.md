@@ -1,4 +1,4 @@
-# Setup Share 1.2
+# Setup Share 1.3
 A simple App for sharing setups within Assetto Corsa sessions.
 
 ## App
@@ -20,11 +20,19 @@ The first line of the app contains the list of the users computer setups. The se
 The rest of the view contains the list of uploaded setups groupped by users. Selecting one and downloading it will write or overwrite the setup on the users computer.
 ![Using the app.](https://raw.githubusercontent.com/albertowd/SetupShare/master/img/app.gif)
 
+### Setup visibility
+
+The new version supports three types of visibility when uploading a setup: private, protected and public. The first one apears only to the owner, while the protected setup will appear to the owners friends too.
+
 ## Web
 
-The [page](http://albertowd.com.br/setupshare/) shows all the uploaded setups, use the search filter to find and download one (.ini and .sp, if available). Uploads are only allowed through the app.
+The [page](http://albertowd.com.br/setupshare/) shows all the uploaded setups, use the search filter to find and download one (.ini and .sp, if available). Uploads are only allowed through the app. There is a steam login button to see the private and protected setups for your steam profiles also.
 
 ## Changelog
+
+v1.3
+* Setup visibility: private, protected and public.
+* Steam login on the web site.
 
 v1.2:
 * App: adapted to the handle the new server.

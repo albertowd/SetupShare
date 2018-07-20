@@ -9,7 +9,7 @@ import sys
 
 SS_API_SERVER = "http://albertowd.com.br/setupshare/api"
 STEAM_ID = 0
-VERSION = "1.2"
+VERSION = "1.3"
 
 def combo_list(car, track):
     """ Gets the list os available setups of the car/track. """

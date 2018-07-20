@@ -33,8 +33,8 @@ function abortExecution(int $code = 403, string $message = "Please don't.")
 function checkVersion()
 {
     $appVersion = param("ver", "0");
-    if ($appVersion != "0" && $appVersion != "1.2") {
-        abortExecution(403, "Please use app v1.2.");
+    if ($appVersion != "0" && $appVersion != "1.3") {
+        abortExecution(403, "Please use app v1.3.");
     }
 }
 
