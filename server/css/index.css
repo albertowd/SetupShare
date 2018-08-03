@@ -4,8 +4,15 @@ body {
 	width: 100%;
 }
 
-div, h1, p {
+div, footer, h1, p {
 	color: #fff;
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 html {
@@ -54,6 +61,10 @@ html {
 .row>div {
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.row>div>img {
+	vertical-align: baseline;
 }
 
 .search {

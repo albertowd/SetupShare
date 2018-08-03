@@ -1,3 +1,31 @@
+<?php
+require_once __DIR__ . "/util/steam.php";
+
+/**
+ * Check if it's a login callback.
+ */
+$steamId = SteamAPI::getId();
+if (!isset($_REQUEST["id"]) && $steamId > 0) {
+    header("Location: http://albertowd.com.br/setupshare/?id=$steamId");
+    die();
+}
+
+/**
+ * Put the login or the logged steam profile button.
+ */
+if (!isset($_REQUEST["id"])) {
+    $login = "&nbsp&nbsp&nbsp<a href=\"" . SteamAPI::getAuthUrl() . "\"><img alt=\"Login on steam.\" src=\"img/steam_login.png\"/></a>";
+} else {
+    $user = SteamAPI::getUser(intval($_REQUEST["id"]));
+    if ($user != null) {
+        $login = "<a class=\"btn btn-danger\" href=\"$user->profileurl\"><img alt=\"Logged avatar.\" height=\"20px\" src=\"$user->avatar\"/> $user->realname.</a>";
+    } else {
+        $login = "";
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en_US">
 
@@ -22,15 +50,20 @@
 </head>
 
 <body>
-    <div class="container-fluid p-5 text-center">
+    <div class="container p-5 text-center">
         <h1>
             <img src="img/Setup Share_ON.png" width="48px" /> Setup Share
         </h1>
-        <p>A simple App for sharing setups within Assetto Corsa sessions.</p>
-        <a class="btn btn-danger" href="https://github.com/albertowd/SetupShare">Download App</a>
+        <p>A simple App for sharing setups within Assetto Corsa sessions.
+        </p>
+        <div class="row">
+            <div class="col-12 col-md-6 py-3">
+                <a class="btn btn-danger" href="https://github.com/albertowd/SetupShare">Download App</a>
+            </div>
+            <div class="col-12 col-md-6 py-3"><?php echo $login; ?></div>
+        </div>
     </div>
     <div class="container-fluid">
-        <p class="text-center">* Setups with pit strategy.</p>
         <div class="row py-3">
             <div class="col-6 col-md-2">
                 <input type="text" class="form-control" id="driver" placeholder="Driver">
@@ -54,10 +87,11 @@
     </div>
     <div class="container-fluid" id="rows">
         <div class="container text-center" id="mask"></div>
-        <div class="container text-center" id="empty">
+        <div class="container d-none text-center" id="empty">
             No setup found.
         </div>
     </div>
+    <footer class="text-center">v1.3</footer>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

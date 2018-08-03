@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 05, 2018 at 11:16 AM
+-- Generation Time: Jul 19, 2018 at 08:58 PM
 -- Server version: 5.7.22-0ubuntu0.16.04.1
 -- PHP Version: 7.0.30-0ubuntu0.16.04.1
 
@@ -34,9 +34,11 @@ CREATE TABLE `setup` (
   `ini` blob NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `sp` blob,
+  `steam_id` bigint(20) DEFAULT NULL,
   `track` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `version` int(11) NOT NULL DEFAULT '1',
-  `version_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `version_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `visibility` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -48,7 +50,7 @@ CREATE TABLE `setup` (
 --
 ALTER TABLE `setup`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `UNIQUE` (`car`,`driver`,`name`,`track`),
+  ADD UNIQUE KEY `UNIQUE` (`car`,`name`,`steam_id`,`track`) USING BTREE,
   ADD KEY `ID_CAR` (`car`),
   ADD KEY `ID_DRIVER` (`driver`),
   ADD KEY `ID_TRACK` (`track`);
@@ -61,7 +63,7 @@ ALTER TABLE `setup`
 -- AUTO_INCREMENT for table `setup`
 --
 ALTER TABLE `setup`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -14,7 +14,7 @@ else:
 os.environ["PATH"] = os.environ["PATH"] + ";."
 
 import ac
-from lib.ss_connection import verify_server
+from lib.ss_connection import count_setups, STEAM_ID, VERSION
 from lib.ss_gui import Gui
 from lib.ss_log import log
 
@@ -24,17 +24,18 @@ GUI = Gui()
 
 def acMain(ac_version):
     """ Setups the app. """
-    log("Starting Setup Share on AC Python API version {}...".format(ac_version))
+    global GUI, VERSION
+    log("Starting Setup Share v{} on AC Python API version {}...".format(VERSION, ac_version))
+    log("Logged Steam ID64: {}".format(STEAM_ID))
 
-    global GUI
     GUI.app_window = ac.newApp("Setup Share")
     ac.setIconPosition(GUI.app_window, 0, -10000)
-    ac.setSize(GUI.app_window, 400, 400)
+    ac.setSize(GUI.app_window, 458, 400)
 
-    lb_version = ac.addLabel(GUI.app_window, "v1.2")
+    lb_version = ac.addLabel(GUI.app_window, VERSION)
     ac.setPosition(lb_version, 10, 3)
 
-    GUI.bt_refresh = GUI.img_buttow("refresh")
+    GUI.bt_refresh = GUI.img_button("refresh")
     ac.addOnClickedListener(GUI.bt_refresh, listener_refresh)
     ac.setPosition(GUI.bt_refresh, 10, 40)
 
@@ -42,7 +43,7 @@ def acMain(ac_version):
     ac.setPosition(GUI.lb_mine, 44, 40)
     ac.setSize(GUI.lb_mine, 60, 30)
 
-    GUI.bt_change = GUI.img_buttow("change")
+    GUI.bt_change = GUI.img_button("change")
     ac.addOnClickedListener(GUI.bt_change, listener_change)
     ac.setPosition(GUI.bt_change, 160, 40)
     ac.setVisible(GUI.bt_change, 0)
@@ -52,10 +53,28 @@ def acMain(ac_version):
     ac.setPosition(GUI.lb_setup, 184, 40)
     ac.setSize(GUI.lb_setup, 182, 30)
 
-    GUI.bt_upload = GUI.img_buttow("upload")
+    GUI.bt_upload = GUI.img_button("upload")
     ac.addOnClickedListener(GUI.bt_upload, listener_upload)
     ac.setPosition(GUI.bt_upload, 366, 40)
     ac.setVisible(GUI.bt_upload, 0)
+
+    GUI.bt_pit = GUI.img_button("pit")
+    ac.drawBorder(GUI.bt_pit, 0)
+    ac.setBackgroundOpacity(GUI.bt_pit, 0)
+    ac.setPosition(GUI.bt_pit, 395, 40)
+    ac.setVisible(GUI.bt_pit, 0)
+
+    GUI.bt_private = GUI.img_button("private")
+    ac.addOnClickedListener(GUI.bt_private, listener_visibility)
+    ac.setPosition(GUI.bt_private, 424, -99999)
+
+    GUI.bt_protected = GUI.img_button("protected")
+    ac.addOnClickedListener(GUI.bt_protected, listener_visibility)
+    ac.setPosition(GUI.bt_protected, 424, -99999)
+
+    GUI.bt_public = GUI.img_button("public")
+    ac.addOnClickedListener(GUI.bt_public, listener_visibility)
+    ac.setPosition(GUI.bt_public, 424, -99999)
 
     download_listeners = [listener_download_0, listener_download_1, listener_download_2, listener_download_3, listener_download_4,
                           listener_download_5, listener_download_6, listener_download_7, listener_download_8, listener_download_9]
@@ -66,7 +85,7 @@ def acMain(ac_version):
         ac.setPosition(label, 10, 70 + driver_index * 30)
         ac.setSize(label, 150, 30)
 
-        change = GUI.img_buttow("change")
+        change = GUI.img_button("change")
         ac.addOnClickedListener(change, change_listeners[driver_index])
         ac.setPosition(change, 160, 73 + driver_index * 30)
         ac.setVisible(change, 0)
@@ -76,14 +95,38 @@ def acMain(ac_version):
         ac.setPosition(setup, 184, 70 + driver_index * 30)
         ac.setSize(setup, 182, 30)
 
-        download = GUI.img_buttow("download")
+        download = GUI.img_button("download")
         ac.addOnClickedListener(download, download_listeners[driver_index])
         ac.setPosition(download, 366, 73 + driver_index * 30)
         ac.setVisible(download, 0)
 
-        GUI.list.append({"download": download, "change": change, "label": label, "setup": setup})
+        pit = GUI.img_button("pit")
+        ac.drawBorder(pit, 0)
+        ac.setBackgroundOpacity(pit, 0)
+        ac.setPosition(pit, 395, 73 + driver_index * 30)
+        ac.setVisible(pit, 0)
 
-    GUI.bt_left = GUI.img_buttow("left")
+        private = GUI.img_button("private")
+        ac.drawBorder(private, 0)
+        ac.setBackgroundOpacity(private, 0)
+        ac.setPosition(private, 424, 73 + driver_index * 30)
+        ac.setVisible(private, 0)
+
+        protected = GUI.img_button("protected")
+        ac.drawBorder(protected, 0)
+        ac.setBackgroundOpacity(protected, 0)
+        ac.setPosition(protected, 424, 73 + driver_index * 30)
+        ac.setVisible(protected, 0)
+
+        public = GUI.img_button("public")
+        ac.drawBorder(public, 0)
+        ac.setBackgroundOpacity(public, 0)
+        ac.setPosition(public, 424, 73 + driver_index * 30)
+        ac.setVisible(public, 0)
+
+        GUI.list.append({"download": download, "change": change, "label": label, "pit": pit, "private": private, "protected": protected, "public": public, "setup": setup})
+
+    GUI.bt_left = GUI.img_button("left")
     ac.addOnClickedListener(GUI.bt_left, listener_left)
     ac.setPosition(GUI.bt_left, 10, 370)
     ac.setVisible(GUI.bt_left, 0)
@@ -94,18 +137,22 @@ def acMain(ac_version):
     ac.setSize(GUI.lb_page, 32, 30)
     ac.setVisible(GUI.lb_page, 0)
 
-    GUI.bt_right = GUI.img_buttow("right")
+    GUI.bt_right = GUI.img_button("right")
     ac.addOnClickedListener(GUI.bt_right, listener_right)
     ac.setPosition(GUI.bt_right, 86, 370)
     ac.setVisible(GUI.bt_right, 0)
 
-    GUI.bt_status_done = GUI.img_buttow("done")
+    GUI.bt_status_done = GUI.img_button("done")
     ac.addOnClickedListener(GUI.bt_status_done, listener_done)
+    ac.drawBorder(GUI.bt_status_done, 0)
+    ac.setBackgroundOpacity(GUI.bt_status_done, 0)
     ac.setPosition(GUI.bt_status_done, 120, 370)
     ac.setVisible(GUI.bt_status_done, 0)
 
-    GUI.bt_status_error = GUI.img_buttow("error")
+    GUI.bt_status_error = GUI.img_button("error")
     ac.addOnClickedListener(GUI.bt_status_error, listener_error)
+    ac.drawBorder(GUI.bt_status_error, 0)
+    ac.setBackgroundOpacity(GUI.bt_status_error, 0)
     ac.setPosition(GUI.bt_status_error, 120, 370)
     ac.setVisible(GUI.bt_status_error, 0)
 
@@ -113,21 +160,11 @@ def acMain(ac_version):
     ac.setPosition(GUI.lb_status, 154, 370)
     ac.setSize(GUI.lb_status, 236, 370)
 
-    if verify_server():
-        GUI.set_status("Refresh app to start.")
-    else:
-        GUI.set_status("Server down, sorry.", True)
+    GUI.set_status("Refresh app to start.")
     GUI.update()
-    
     log("Success.")
 
     return "Setup Share"
-
-
-def acShutdown():
-    """ Called when the session ends (or restarts). """
-    log("Shuting down Setup Share...")
-    log("Success.")
 
 
 def listener_change(*args):
@@ -310,7 +347,9 @@ def listener_refresh(*args):
     global GUI
     GUI.set_status("")
     GUI.clear()
-    if verify_server():
+    setup_count = count_setups()
+    if setup_count > -1:
+        GUI.set_status("{} setups on the system.".format(setup_count))
         GUI.update_setups()
     else:
         GUI.set_status("Server down, sorry.", True)
@@ -321,4 +360,10 @@ def listener_upload(*args):
     """ Upload the selected setup. """
     global GUI
     GUI.upload()
+    GUI.update()
+
+def listener_visibility(*args):
+    """ Visibility of the setup to upload. """
+    global GUI
+    GUI.change_visibility()
     GUI.update()
