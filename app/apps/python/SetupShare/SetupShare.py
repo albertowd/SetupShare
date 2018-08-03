@@ -160,10 +160,7 @@ def acMain(ac_version):
     ac.setPosition(GUI.lb_status, 154, 370)
     ac.setSize(GUI.lb_status, 236, 370)
 
-    if count_setups() > 0:
-        GUI.set_status("Refresh app to start.")
-    else:
-        GUI.set_status("Server down, sorry.", True)
+    GUI.set_status("Refresh app to start.")
     GUI.update()
     log("Success.")
 
@@ -351,7 +348,7 @@ def listener_refresh(*args):
     GUI.set_status("")
     GUI.clear()
     setup_count = count_setups()
-    if setup_count > 0:
+    if setup_count > -1:
         GUI.set_status("{} setups on the system.".format(setup_count))
         GUI.update_setups()
     else:

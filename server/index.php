@@ -91,7 +91,7 @@ if (!isset($_REQUEST["id"])) {
             No setup found.
         </div>
     </div>
-    <footer class="text-center">v1.2</footer>
+    <footer class="text-center">v1.3</footer>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
