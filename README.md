@@ -22,7 +22,10 @@ The rest of the view contains the list of uploaded setups groupped by users. Sel
 
 ### Setup visibility
 
-The new version supports three types of visibility when uploading a setup: private, protected and public. The first one apears only to the owner, while the protected setup will appear to the owners friends too.
+The new version supports three types of visibility when uploading a setup: private, protected and public.
+* ![Private icon.](https://raw.githubusercontent.com/albertowd/SetupShare/master/app/apps/python/SetupShare/img/private.png) Only visible to the owner.
+* ![Protected icon.](https://raw.githubusercontent.com/albertowd/SetupShare/master/app/apps/python/SetupShare/img/protected.png) Visible by the owner and steam friends.
+* ![Public icon.](https://raw.githubusercontent.com/albertowd/SetupShare/master/app/apps/python/SetupShare/img/public.png) Visible by everyone.
 
 ## Web
 

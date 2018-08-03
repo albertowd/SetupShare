@@ -19,7 +19,7 @@ def combo_list(car, track):
 
 def count_setups():
     global SS_API_SERVER, VERSION
-    count = 0
+    count = -1
     ret = get("{}/count.php?ver={}".format(SS_API_SERVER, VERSION), timeout=5)
     if ret.status_code == 200:
         count = int(ret.text)
